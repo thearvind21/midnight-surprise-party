@@ -1,6 +1,7 @@
 
 import { useContext, useEffect, useState } from "react";
-import { TimeContext } from "@/contexts/BirthdayContext";
+import { useNavigate } from "react-router-dom";
+import { BirthdayContext, TimeContext } from "@/contexts/BirthdayContext";
 
 interface CountdownTimerProps {
   targetDate: Date;
@@ -8,6 +9,8 @@ interface CountdownTimerProps {
 
 const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
   const { currentTime } = useContext(TimeContext);
+  const { setIsBirthdayTime, setShowSurpriseModal } = useContext(BirthdayContext);
+  const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState({
     hours: 0,
     minutes: 0,
@@ -21,6 +24,17 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
     if (timeDiff <= 0) {
       // Target time reached
       setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
+      
+      // Set birthday time and show surprise modal
+      setIsBirthdayTime(true);
+      setShowSurpriseModal(true);
+      localStorage.setItem("birthdayPassed", "true");
+      
+      // Navigate to cake page if user has accepted
+      const hasAccepted = localStorage.getItem("birthdayAccepted");
+      if (hasAccepted === "true") {
+        navigate("/cake");
+      }
       return;
     }
     
@@ -30,7 +44,7 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
     const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
     
     setTimeLeft({ hours, minutes, seconds });
-  }, [currentTime, targetDate]);
+  }, [currentTime, targetDate, setIsBirthdayTime, setShowSurpriseModal, navigate]);
 
   return (
     <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 w-full">
