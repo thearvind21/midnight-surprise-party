@@ -43,7 +43,7 @@ const LandingPage = () => {
 
   // Calculate target time (next midnight)
   const targetDate = new Date();
-  targetDate.setHours(02, 26, 0, 0);
+  targetDate.setHours(2, 27, 0, 0);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center birthday-gradient relative overflow-hidden">
