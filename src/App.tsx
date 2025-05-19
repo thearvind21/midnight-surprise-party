@@ -6,10 +6,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import LandingPage from "@/pages/LandingPage";
+import CakePage from "@/pages/CakePage"; // Import the CakePage component
+import PhotoGallery from "@/pages/PhotoGallery"; // Import the PhotoGallery component
 import NotFound from "@/pages/NotFound";
 import { BirthdayContext, TimeContext } from "@/contexts/BirthdayContext";
-import { CakeScene } from '@/components/cake/CakeScene';
-import GalleryPage from './pages/GalleryPage';
 import SurpriseModal from './components/SurpriseModal';
 
 const queryClient = new QueryClient();
@@ -19,7 +19,7 @@ const AppContent = () => {
   const [isBirthdayTime, setIsBirthdayTime] = useState(false);
   const [showSurpriseModal, setShowSurpriseModal] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [name, setName] = useState('Sai'); // Set the birthday person's name here
+  const [name, setName] = useState('Sarah'); // Set the birthday person's name here
   const [cakeCut, setCakeCut] = useState(false);
   const navigate = useNavigate();
 
@@ -71,8 +71,8 @@ const AppContent = () => {
       >
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/cake" element={<CakeScene userName={name} />} />
-          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/cake" element={<CakePage />} />
+          <Route path="/gallery" element={<PhotoGallery />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         

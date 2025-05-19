@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Volume2, VolumeX, Sparkles, RotateCcw, RotateCw, ZoomIn, ZoomOut, Palette } from "lucide-react";
+import { Volume2, VolumeX, Sparkles, RotateCcw, RotateCw, ZoomIn, ZoomOut, Palette, Scissors } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface CakeControlsProps {
@@ -53,7 +53,7 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
               onClick={handleCutCake}
               className="bg-birthday-gold hover:bg-birthday-gold/80 text-black font-medium px-8 py-6 text-xl animate-pulse-soft shadow-lg flex items-center gap-2 transform hover:scale-105 transition-all"
             >
-              <Sparkles className="h-6 w-6" />
+              <Scissors className="h-6 w-6" />
               Cut the Cake!
               <Sparkles className="h-6 w-6" />
             </Button>
@@ -74,16 +74,16 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
         </div>
       </div>
       
-      {/* Interactive controls panel */}
-      <div className="fixed top-4 left-4 z-20 flex flex-col gap-2">
-        <div className="bg-white/30 backdrop-blur-md rounded-xl p-2 flex flex-col gap-2 border border-white/50">
-          <h3 className="text-xs font-medium text-white px-2">Rotate</h3>
+      {/* Interactive controls panel with glass effect */}
+      <div className="fixed top-4 left-4 z-20 flex flex-col gap-3">
+        <div className="bg-white/20 backdrop-blur-md rounded-xl p-3 flex flex-col gap-2 border border-white/30 shadow-lg hover:bg-white/30 transition-all duration-300">
+          <h3 className="text-xs font-medium text-white px-2 flex items-center justify-center">Rotate Cake</h3>
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="icon"
               onClick={() => onRotateCake?.('left')}
-              className="glass-button w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-white/20"
+              className="glass-button w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-white/20 hover:scale-110 transition-transform"
             >
               <RotateCcw className="h-4 w-4 text-white" />
             </Button>
@@ -91,21 +91,21 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
               variant="outline"
               size="icon"
               onClick={() => onRotateCake?.('right')}
-              className="glass-button w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-white/20"
+              className="glass-button w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-white/20 hover:scale-110 transition-transform"
             >
               <RotateCw className="h-4 w-4 text-white" />
             </Button>
           </div>
         </div>
         
-        <div className="bg-white/30 backdrop-blur-md rounded-xl p-2 flex flex-col gap-2 border border-white/50">
-          <h3 className="text-xs font-medium text-white px-2">Zoom</h3>
+        <div className="bg-white/20 backdrop-blur-md rounded-xl p-3 flex flex-col gap-2 border border-white/30 shadow-lg hover:bg-white/30 transition-all duration-300">
+          <h3 className="text-xs font-medium text-white px-2 flex items-center justify-center">Zoom</h3>
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="icon"
               onClick={() => onZoomCake?.('in')}
-              className="glass-button w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-white/20"
+              className="glass-button w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-white/20 hover:scale-110 transition-transform"
             >
               <ZoomIn className="h-4 w-4 text-white" />
             </Button>
@@ -113,24 +113,24 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
               variant="outline"
               size="icon"
               onClick={() => onZoomCake?.('out')}
-              className="glass-button w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-white/20"
+              className="glass-button w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-white/20 hover:scale-110 transition-transform"
             >
               <ZoomOut className="h-4 w-4 text-white" />
             </Button>
           </div>
         </div>
         
-        <div className="bg-white/30 backdrop-blur-md rounded-xl p-2 flex flex-col gap-2 border border-white/50">
-          <div className="flex items-center px-2">
+        <div className="bg-white/20 backdrop-blur-md rounded-xl p-3 flex flex-col gap-2 border border-white/30 shadow-lg hover:bg-white/30 transition-all duration-300">
+          <div className="flex items-center justify-center px-2">
             <h3 className="text-xs font-medium text-white mr-1">Theme</h3>
             <Palette className="h-3 w-3 text-white" />
           </div>
-          <div className="flex flex-col gap-1 px-1">
+          <div className="flex flex-col gap-2 px-1">
             {themes.map(theme => (
               <button
                 key={theme.id}
                 onClick={() => onChangeTheme?.(theme.id)}
-                className={`w-full h-6 rounded-md ${theme.color} border ${activeTheme === theme.id ? 'border-white shadow-lg scale-110' : 'border-transparent'} transition-all`}
+                className={`w-full h-6 rounded-md ${theme.color} border ${activeTheme === theme.id ? 'border-white shadow-lg scale-110' : 'border-transparent'} transition-all hover:scale-105`}
                 title={theme.name}
               />
             ))}
@@ -138,26 +138,31 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
         </div>
       </div>
       
-      {/* Music control */}
+      {/* Music control with enhanced styling */}
       <div className="absolute top-4 right-4 z-20">
         <Button
           variant="outline"
           size="icon"
           onClick={toggleMusic}
-          className="glass-button w-12 h-12 rounded-full bg-white/30 backdrop-blur-sm hover:bg-white/40 border-birthday-gold"
+          className="glass-button w-12 h-12 rounded-full bg-white/30 backdrop-blur-sm hover:bg-white/40 border-birthday-gold hover:scale-110 transition-all duration-300"
+          title={isMusicPlaying ? "Mute Music" : "Play Music"}
         >
-          {isMusicPlaying ? <VolumeX className="h-6 w-6 text-white" /> : <Volume2 className="h-6 w-6 text-white" />}
+          {isMusicPlaying ? (
+            <VolumeX className="h-6 w-6 text-white animate-pulse" />
+          ) : (
+            <Volume2 className="h-6 w-6 text-white" />
+          )}
         </Button>
       </div>
       
-      {/* Go back button */}
+      {/* Go back button with enhanced styling */}
       <div className="absolute bottom-4 left-4 z-20">
         <Button
           variant="outline"
           onClick={() => navigate("/")}
-          className="glass-button bg-white/30 backdrop-blur-sm hover:bg-white/40 text-white border-white/50"
+          className="glass-button bg-white/30 backdrop-blur-sm hover:bg-white/40 text-white border-white/50 hover:scale-105 transition-all"
         >
-          Go Back
+          Return Home
         </Button>
       </div>
     </>

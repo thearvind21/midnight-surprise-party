@@ -120,10 +120,12 @@
 /* Glass card effect */
 .glass-card {
   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.25);
+  backdrop-filter: blur(8px);
 }
 
 .glass-button {
   box-shadow: 0 4px 12px rgba(31, 38, 135, 0.2);
+  backdrop-filter: blur(4px);
 }
 
 /* Text shadows */
@@ -132,11 +134,11 @@
 }
 
 .text-shadow-md {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
 }
 
 .text-shadow-lg {
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Float animations */
@@ -189,7 +191,7 @@
 }
 
 .photo-card {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .photo-card:hover {
@@ -211,13 +213,13 @@
 /* Custom animations */
 @keyframes float {
   0% {
-    transform: translateY(0px);
+    transform: translateY(0px) rotate(0deg);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-20px) rotate(1deg);
   }
   100% {
-    transform: translateY(0px);
+    transform: translateY(0px) rotate(0deg);
   }
 }
 
@@ -244,43 +246,147 @@
   animation: sparkle 2s ease-in-out infinite;
 }
 
-/* Smooth transitions */
-.transition-all {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
+/* Pulse animation for buttons */
+@keyframes pulse-soft {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
 }
 
-/* Custom scrollbar */
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* Typewriter effect for birthday message */
+.typewriter p {
+  overflow: hidden;
+  border-right: .15em solid transparent;
+  white-space: normal;
+  margin: 0 auto;
+  letter-spacing: .05em;
+  animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+}
+
+@keyframes typing {
+  from { max-width: 0 }
+  to { max-width: 100% }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: #8b5cf6 }
+}
+
+/* Enhanced glass card styles */
+.glass-card {
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.glass-button {
+  box-shadow: 0 4px 12px rgba(31, 38, 135, 0.2);
+  backdrop-filter: blur(4px);
+}
+
+/* Additional birthday-specific colors */
+:root {
+  --birthday-pink: #ffd6e7;
+  --birthday-purple: #c8b6ff;
+  --birthday-blue: #befcfd;
+  --birthday-gold: #ffd700;
+  --birthday-peach: #ffcba4;
+}
+
+/* Image hover effects for gallery */
+.photo-card img {
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.photo-card:hover img {
+  transform: scale(1.08);
+}
+
+.photo-card {
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.photo-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+/* 3D tilt effect on hover */
+.tilt-card {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.tilt-card-inner {
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+}
+
+.tilt-card:hover .tilt-card-inner {
+  transform: rotateY(10deg) rotateX(5deg);
+}
+
+/* Enhanced text shadows */
+.text-shadow-sm {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.text-shadow-md {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Custom scrollbar for gallery page */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: rgba(255, 255, 255, 0.5);
 }
 
-/* Fade in animation */
-@keyframes fade-in {
+/* Custom animations for the gallery */
+@keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0);
   }
 }
 
-.animate-fade-in {
-  animation: fade-in 0.5s ease-out forwards;
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+/* Smooth transitions for all elements */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
 }

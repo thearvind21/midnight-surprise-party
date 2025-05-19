@@ -23,9 +23,10 @@ const CakePage = () => {
       navigate("/");
     }
     
-    // Initialize audio
+    // Initialize audio with better birthday music
     audioRef.current = new Audio("https://www.chosic.com/wp-content/uploads/2020/05/Happy-Birthday-To-You-Song.mp3");
     audioRef.current.loop = true;
+    audioRef.current.volume = 0.5; // Lower volume for better experience
     
     return () => {
       if (audioRef.current) {
@@ -43,10 +44,6 @@ const CakePage = () => {
     // Start cutting animation first
     setCuttingAnimation(true);
     
-    // Play cutting sound
-    const cuttingSound = new Audio("https://freesound.org/data/previews/234/234782_4019029-lq.mp3");
-    cuttingSound.play();
-    
     // After animation completes, set cake as cut
     setTimeout(() => {
       setCakeCut();
@@ -54,27 +51,30 @@ const CakePage = () => {
       // Wait a moment before navigating to gallery
       setTimeout(() => {
         navigate("/gallery");
-      }, 3000);
-    }, 2000);
+      }, 5000); // Longer wait time to appreciate the animation
+    }, 3500);
   };
 
   const toggleMusic = () => {
     if (isMusicPlaying) {
       audioRef.current?.pause();
     } else {
-      audioRef.current?.play();
+      audioRef.current?.play().catch(err => {
+        console.log("Audio play error:", err);
+        // Some browsers block autoplay, we'll need user interaction
+      });
     }
     setIsMusicPlaying(!isMusicPlaying);
   };
   
   const handleRotateCake = (direction: 'left' | 'right') => {
-    setCakeRotation(prev => prev + (direction === 'right' ? 0.5 : -0.5));
+    setCakeRotation(prev => prev + (direction === 'right' ? 0.25 : -0.25));
   };
   
   const handleZoomCake = (direction: 'in' | 'out') => {
     setCakeZoom(prev => {
-      if (direction === 'in' && prev < 1.5) return prev + 0.1;
-      if (direction === 'out' && prev > 0.5) return prev - 0.1;
+      if (direction === 'in' && prev < 1.8) return prev + 0.1;
+      if (direction === 'out' && prev > 0.6) return prev - 0.1;
       return prev;
     });
   };
