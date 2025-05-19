@@ -1,6 +1,5 @@
-
 import React, { useContext, useState, useEffect, useRef } from "react";
-import { CountdownTimer } from "@/components/CountdownTimer";
+import CountdownTimer from "@/components/CountdownTimer";
 import { Button } from "@/components/ui/button";
 import { BirthdayContext, TimeContext } from "@/contexts/BirthdayContext";
 import { gsap } from "gsap";
