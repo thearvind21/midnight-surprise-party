@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { BirthdayContext } from "@/contexts/BirthdayContext";
 import { CakeScene } from "@/components/cake/CakeScene";
 import { CakeControls } from "@/components/cake/CakeControls";
-import * as THREE from "three";
 
 const CakePage = () => {
   const { isBirthdayTime, cakeCut, setCakeCut } = useContext(BirthdayContext);
@@ -16,6 +15,7 @@ const CakePage = () => {
   const [cakeRotation, setCakeRotation] = useState(0);
   const [cakeZoom, setCakeZoom] = useState(1);
   const [activeTheme, setActiveTheme] = useState("default");
+  const [forceRender, setForceRender] = useState(0); // Add state to force re-render
   
   // Redirect if not birthday time yet
   useEffect(() => {
@@ -33,6 +33,11 @@ const CakePage = () => {
       }
     };
   }, [isBirthdayTime, navigate]);
+
+  // Force the cake scene to re-render once on component mount
+  useEffect(() => {
+    setForceRender(prev => prev + 1);
+  }, []);
 
   const handleCutCake = () => {
     // Start cutting animation first
@@ -96,26 +101,30 @@ const CakePage = () => {
 
   return (
     <div className={`min-h-screen flex flex-col items-center justify-center relative overflow-hidden ${getBackgroundStyle()} transition-colors duration-1000`}>
-      {/* 3D Cake Scene */}
-      <CakeScene 
-        userName={userName} 
-        rotation={cakeRotation}
-        zoom={cakeZoom}
-      />
+      {/* Force re-render with key prop */}
+      <div className="w-full h-full absolute inset-0" key={forceRender}>
+        <CakeScene 
+          userName={userName} 
+          rotation={cakeRotation}
+          zoom={cakeZoom}
+        />
+      </div>
       
       {/* Controls and UI elements */}
-      <CakeControls 
-        isMusicPlaying={isMusicPlaying}
-        toggleMusic={toggleMusic}
-        handleCutCake={handleCutCake}
-        cakeCut={cakeCut}
-        cuttingAnimation={cuttingAnimation}
-        userName={userName}
-        onRotateCake={handleRotateCake}
-        onZoomCake={handleZoomCake}
-        onChangeTheme={changeTheme}
-        activeTheme={activeTheme}
-      />
+      <div className="relative z-10">
+        <CakeControls 
+          isMusicPlaying={isMusicPlaying}
+          toggleMusic={toggleMusic}
+          handleCutCake={handleCutCake}
+          cakeCut={cakeCut}
+          cuttingAnimation={cuttingAnimation}
+          userName={userName}
+          onRotateCake={handleRotateCake}
+          onZoomCake={handleZoomCake}
+          onChangeTheme={changeTheme}
+          activeTheme={activeTheme}
+        />
+      </div>
     </div>
   );
 };
