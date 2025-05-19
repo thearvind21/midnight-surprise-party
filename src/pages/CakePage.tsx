@@ -1,5 +1,5 @@
 
-import { useContext, useState, useRef } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BirthdayContext } from "@/contexts/BirthdayContext";
 import { CakeScene } from "@/components/cake/CakeScene";
@@ -13,9 +13,12 @@ const CakePage = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [userName] = useState("Sarah"); // Replace with actual name or from context
   const [cuttingAnimation, setCuttingAnimation] = useState(false);
+  const [cakeRotation, setCakeRotation] = useState(0);
+  const [cakeZoom, setCakeZoom] = useState(1);
+  const [activeTheme, setActiveTheme] = useState("default");
   
   // Redirect if not birthday time yet
-  useState(() => {
+  useEffect(() => {
     if (!isBirthdayTime) {
       navigate("/");
     }
@@ -29,7 +32,7 @@ const CakePage = () => {
         audioRef.current.pause();
       }
     };
-  });
+  }, [isBirthdayTime, navigate]);
 
   const handleCutCake = () => {
     // Start cutting animation first
@@ -58,11 +61,47 @@ const CakePage = () => {
     }
     setIsMusicPlaying(!isMusicPlaying);
   };
+  
+  const handleRotateCake = (direction: 'left' | 'right') => {
+    setCakeRotation(prev => prev + (direction === 'right' ? 0.5 : -0.5));
+  };
+  
+  const handleZoomCake = (direction: 'in' | 'out') => {
+    setCakeZoom(prev => {
+      if (direction === 'in' && prev < 1.5) return prev + 0.1;
+      if (direction === 'out' && prev > 0.5) return prev - 0.1;
+      return prev;
+    });
+  };
+  
+  const changeTheme = (theme: string) => {
+    setActiveTheme(theme);
+  };
+  
+  // Define background styles based on active theme
+  const getBackgroundStyle = () => {
+    switch(activeTheme) {
+      case 'pastel':
+        return 'bg-gradient-to-br from-birthday-pink via-birthday-peach to-birthday-blue';
+      case 'vibrant':
+        return 'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500';
+      case 'night':
+        return 'bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900';
+      case 'forest':
+        return 'bg-gradient-to-br from-emerald-500 to-teal-800';
+      default:
+        return 'bg-gradient-to-br from-birthday-pink via-birthday-purple to-birthday-blue';
+    }
+  };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+    <div className={`min-h-screen flex flex-col items-center justify-center relative overflow-hidden ${getBackgroundStyle()} transition-colors duration-1000`}>
       {/* 3D Cake Scene */}
-      <CakeScene userName={userName} />
+      <CakeScene 
+        userName={userName} 
+        rotation={cakeRotation}
+        zoom={cakeZoom}
+      />
       
       {/* Controls and UI elements */}
       <CakeControls 
@@ -72,6 +111,10 @@ const CakePage = () => {
         cakeCut={cakeCut}
         cuttingAnimation={cuttingAnimation}
         userName={userName}
+        onRotateCake={handleRotateCake}
+        onZoomCake={handleZoomCake}
+        onChangeTheme={changeTheme}
+        activeTheme={activeTheme}
       />
     </div>
   );

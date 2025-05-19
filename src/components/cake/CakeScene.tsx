@@ -5,6 +5,8 @@ import Sparkles from "@/components/Sparkles";
 
 interface CakeSceneProps {
   userName: string;
+  rotation?: number;
+  zoom?: number;
 }
 
 const POP_SOUNDS = [
@@ -15,7 +17,7 @@ const POP_SOUNDS = [
   "https://cdn.pixabay.com/audio/2022/10/16/audio_12b1b7b7e2.mp3"  // chime
 ];
 
-export const CakeScene = ({ userName }: CakeSceneProps) => {
+export const CakeScene = ({ userName, rotation = 0, zoom = 1 }: CakeSceneProps) => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
@@ -24,6 +26,7 @@ export const CakeScene = ({ userName }: CakeSceneProps) => {
   const [confetti, setConfetti] = useState(false);
   const cakeGroupRef = useRef<THREE.Group | null>(null);
   const flameRefs = useRef<THREE.Mesh[]>([]);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
 
   // Interactive reveal state
   const [revealStep, setRevealStep] = useState(0); // 0=none, 1=base, 2=t1, 3=t2, 4=t3, 5=deco
@@ -37,6 +40,18 @@ export const CakeScene = ({ userName }: CakeSceneProps) => {
       audio.play();
     }
   };
+
+  // Apply external rotation and zoom
+  useEffect(() => {
+    if (cakeGroupRef.current) {
+      cakeGroupRef.current.rotation.y = rotation;
+    }
+    
+    if (cameraRef.current) {
+      // Base camera Z position is 8, adjust based on zoom factor
+      cameraRef.current.position.z = 8 / zoom;
+    }
+  }, [rotation, zoom]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -52,6 +67,7 @@ export const CakeScene = ({ userName }: CakeSceneProps) => {
     );
     camera.position.set(0, 2, 8);
     camera.lookAt(0, 0, 0);
+    cameraRef.current = camera;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -71,6 +87,20 @@ export const CakeScene = ({ userName }: CakeSceneProps) => {
     spotLight.position.set(0, 8, 0);
     spotLight.castShadow = true;
     scene.add(spotLight);
+
+    // Add colorful point lights for interactive lighting
+    const colors = [0xff5555, 0x55ff55, 0x5555ff, 0xffff55];
+    colors.forEach((color, index) => {
+      const pointLight = new THREE.PointLight(color, 0.5, 10);
+      const angle = (index / colors.length) * Math.PI * 2;
+      const radius = 5;
+      pointLight.position.set(
+        Math.cos(angle) * radius,
+        2,
+        Math.sin(angle) * radius
+      );
+      scene.add(pointLight);
+    });
 
     // --- Programmatic Cake Construction ---
     const cakeGroup = new THREE.Group();
@@ -320,7 +350,8 @@ export const CakeScene = ({ userName }: CakeSceneProps) => {
     const animate = () => {
       requestAnimationFrame(animate);
       if (cakeGroupRef.current) {
-        cakeGroupRef.current.rotation.y += 0.003;
+        // Automatic rotation disabled to support manual rotation
+        // cakeGroupRef.current.rotation.y += 0.003;
       }
       // Animate candle flames (flicker)
       const t = (Date.now() - startTime) / 1000;
@@ -385,7 +416,7 @@ export const CakeScene = ({ userName }: CakeSceneProps) => {
       window.removeEventListener('resize', handleResize);
       if (canvasRef.current) canvasRef.current.innerHTML = '';
     };
-  }, [revealStep]);
+  }, [userName, revealStep]);
 
   // Interactive reveal handler
   const handleRevealNext = () => {

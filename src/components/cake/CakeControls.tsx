@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Volume2, VolumeX, Sparkles } from "lucide-react";
+import { Volume2, VolumeX, Sparkles, RotateCcw, RotateCw, ZoomIn, ZoomOut, Palette } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface CakeControlsProps {
@@ -11,6 +11,10 @@ interface CakeControlsProps {
   cakeCut: boolean;
   cuttingAnimation: boolean;
   userName: string;
+  onRotateCake?: (direction: 'left' | 'right') => void;
+  onZoomCake?: (direction: 'in' | 'out') => void;
+  onChangeTheme?: (theme: string) => void;
+  activeTheme?: string;
 }
 
 export const CakeControls: React.FC<CakeControlsProps> = ({ 
@@ -19,12 +23,25 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
   handleCutCake, 
   cakeCut, 
   cuttingAnimation,
-  userName
+  userName,
+  onRotateCake,
+  onZoomCake,
+  onChangeTheme,
+  activeTheme = 'default'
 }) => {
   const navigate = useNavigate();
   
+  const themes = [
+    { id: 'default', name: 'Default', color: 'bg-gradient-to-br from-pink-200 to-purple-200' },
+    { id: 'pastel', name: 'Pastel', color: 'bg-gradient-to-br from-pink-200 via-blue-100 to-green-200' },
+    { id: 'vibrant', name: 'Vibrant', color: 'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500' },
+    { id: 'night', name: 'Night', color: 'bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900' },
+    { id: 'forest', name: 'Forest', color: 'bg-gradient-to-br from-emerald-500 to-teal-800' }
+  ];
+  
   return (
     <>
+      {/* Main controls */}
       <div className="z-10 p-6 text-center relative">
         <div className="glass-card p-8 rounded-2xl backdrop-blur-md bg-white/30 border border-white/50 shadow-xl">
           <h1 className="text-4xl md:text-6xl font-display font-bold mb-8 text-white text-shadow-lg animate-fade-in">
@@ -54,6 +71,70 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
               )}
             </div>
           )}
+        </div>
+      </div>
+      
+      {/* Interactive controls panel */}
+      <div className="fixed top-4 left-4 z-20 flex flex-col gap-2">
+        <div className="bg-white/30 backdrop-blur-md rounded-xl p-2 flex flex-col gap-2 border border-white/50">
+          <h3 className="text-xs font-medium text-white px-2">Rotate</h3>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => onRotateCake?.('left')}
+              className="glass-button w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-white/20"
+            >
+              <RotateCcw className="h-4 w-4 text-white" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => onRotateCake?.('right')}
+              className="glass-button w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-white/20"
+            >
+              <RotateCw className="h-4 w-4 text-white" />
+            </Button>
+          </div>
+        </div>
+        
+        <div className="bg-white/30 backdrop-blur-md rounded-xl p-2 flex flex-col gap-2 border border-white/50">
+          <h3 className="text-xs font-medium text-white px-2">Zoom</h3>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => onZoomCake?.('in')}
+              className="glass-button w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-white/20"
+            >
+              <ZoomIn className="h-4 w-4 text-white" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => onZoomCake?.('out')}
+              className="glass-button w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-white/20"
+            >
+              <ZoomOut className="h-4 w-4 text-white" />
+            </Button>
+          </div>
+        </div>
+        
+        <div className="bg-white/30 backdrop-blur-md rounded-xl p-2 flex flex-col gap-2 border border-white/50">
+          <div className="flex items-center px-2">
+            <h3 className="text-xs font-medium text-white mr-1">Theme</h3>
+            <Palette className="h-3 w-3 text-white" />
+          </div>
+          <div className="flex flex-col gap-1 px-1">
+            {themes.map(theme => (
+              <button
+                key={theme.id}
+                onClick={() => onChangeTheme?.(theme.id)}
+                className={`w-full h-6 rounded-md ${theme.color} border ${activeTheme === theme.id ? 'border-white shadow-lg scale-110' : 'border-transparent'} transition-all`}
+                title={theme.name}
+              />
+            ))}
+          </div>
         </div>
       </div>
       
