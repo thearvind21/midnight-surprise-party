@@ -1,8 +1,7 @@
-
 import { useContext, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { BirthdayContext } from "@/contexts/BirthdayContext";
-import { CakeScene, createSparklesAtPosition } from "@/components/cake/CakeScene";
+import { CakeScene } from "@/components/cake/CakeScene";
 import { CakeControls } from "@/components/cake/CakeControls";
 import { CakeBackground } from "@/components/cake/CakeBackground";
 import * as THREE from "three";
@@ -13,7 +12,6 @@ const CakePage = () => {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [userName] = useState("Sarah"); // Replace with actual name or from context
-  const sceneRef = useRef<THREE.Scene | null>(null);
   const [cuttingAnimation, setCuttingAnimation] = useState(false);
   
   // Redirect if not birthday time yet
@@ -41,16 +39,6 @@ const CakePage = () => {
     const cuttingSound = new Audio("https://freesound.org/data/previews/234/234782_4019029-lq.mp3");
     cuttingSound.play();
     
-    // Add sparkles around cake when cutting
-    if (sceneRef.current) {
-      for (let i = 0; i < 5; i++) {
-        const x = (Math.random() - 0.5) * 3;
-        const y = Math.random() * 2 + 0.5;
-        const z = (Math.random() - 0.5) * 3;
-        createSparklesAtPosition(sceneRef.current, new THREE.Vector3(x, y, z), 30);
-      }
-    }
-    
     // After animation completes, set cake as cut
     setTimeout(() => {
       setCakeCut();
@@ -77,12 +65,7 @@ const CakePage = () => {
       <CakeBackground />
       
       {/* 3D Cake Scene */}
-      <CakeScene 
-        userName={userName}
-        cakeCut={cakeCut}
-        onCuttingAnimationChange={setCuttingAnimation}
-        cuttingAnimation={cuttingAnimation}
-      />
+      <CakeScene userName={userName} />
       
       {/* Controls and UI elements */}
       <CakeControls 
