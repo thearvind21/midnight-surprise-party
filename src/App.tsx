@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,6 +19,7 @@ const App = () => {
   const [showSurpriseModal, setShowSurpriseModal] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [name, setName] = useState('Sai'); // Set the birthday person's name here
+  const [cakeCut, setCakeCut] = useState(false);
 
   // Check if it's midnight
   useEffect(() => {
@@ -35,6 +37,19 @@ const App = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // For demo purposes, set birthday time immediately
+  useEffect(() => {
+    // Comment this out in production if you want to only show on actual birthday
+    setIsBirthdayTime(true);
+    // Uncomment below if you want to show the modal immediately for testing
+    // setShowSurpriseModal(true);
+  }, []);
+
+  // Function to set cake as cut
+  const handleSetCakeCut = () => {
+    setCakeCut(true);
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -44,7 +59,9 @@ const App = () => {
               isBirthdayTime, 
               setIsBirthdayTime,
               showSurpriseModal, 
-              setShowSurpriseModal 
+              setShowSurpriseModal,
+              cakeCut,
+              setCakeCut: handleSetCakeCut
             }}
           >
             <Toaster />
@@ -57,6 +74,13 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Router>
+            
+            {/* Add SurpriseModal outside of routes */}
+            <SurpriseModal 
+              isOpen={showSurpriseModal} 
+              onClose={() => setShowSurpriseModal(false)} 
+              name={name} 
+            />
           </BirthdayContext.Provider>
         </TimeContext.Provider>
       </TooltipProvider>
