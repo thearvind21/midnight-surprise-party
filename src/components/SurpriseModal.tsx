@@ -1,16 +1,15 @@
+
 import { useEffect } from 'react';
 import { gsap } from 'gsap';
-import { useNavigate } from 'react-router-dom';
 
 interface SurpriseModalProps {
   isOpen: boolean;
   onClose: () => void;
   name: string;
+  onShowSurprise: () => void;
 }
 
-const SurpriseModal = ({ isOpen, onClose, name }: SurpriseModalProps) => {
-  const navigate = useNavigate();
-
+const SurpriseModal = ({ isOpen, onClose, name, onShowSurprise }: SurpriseModalProps) => {
   useEffect(() => {
     if (isOpen) {
       gsap.from('.modal-content', {
@@ -29,7 +28,7 @@ const SurpriseModal = ({ isOpen, onClose, name }: SurpriseModalProps) => {
       duration: 0.3,
       ease: 'power2.in',
       onComplete: () => {
-        navigate('/cake');
+        onShowSurprise();
       },
     });
   };
@@ -64,4 +63,4 @@ const SurpriseModal = ({ isOpen, onClose, name }: SurpriseModalProps) => {
   );
 };
 
-export default SurpriseModal; 
+export default SurpriseModal;

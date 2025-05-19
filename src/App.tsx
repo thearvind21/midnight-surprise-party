@@ -1,9 +1,9 @@
 
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "./components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import LandingPage from "@/pages/LandingPage";
 import NotFound from "@/pages/NotFound";
@@ -14,12 +14,14 @@ import SurpriseModal from './components/SurpriseModal';
 
 const queryClient = new QueryClient();
 
-const App = () => {
+// Create a wrapper component for the app content that uses Router-dependent hooks
+const AppContent = () => {
   const [isBirthdayTime, setIsBirthdayTime] = useState(false);
   const [showSurpriseModal, setShowSurpriseModal] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [name, setName] = useState('Sai'); // Set the birthday person's name here
   const [cakeCut, setCakeCut] = useState(false);
+  const navigate = useNavigate();
 
   // Check if it's midnight
   useEffect(() => {
@@ -49,40 +51,52 @@ const App = () => {
   const handleSetCakeCut = () => {
     setCakeCut(true);
   };
+  
+  // Function to handle navigation to cake page
+  const handleShowSurprise = () => {
+    navigate('/cake');
+  };
 
+  return (
+    <TimeContext.Provider value={{ currentTime }}>
+      <BirthdayContext.Provider 
+        value={{ 
+          isBirthdayTime, 
+          setIsBirthdayTime,
+          showSurpriseModal, 
+          setShowSurpriseModal,
+          cakeCut,
+          setCakeCut: handleSetCakeCut
+        }}
+      >
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/cake" element={<CakeScene userName={name} />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        
+        {/* Add SurpriseModal with navigation callback */}
+        <SurpriseModal 
+          isOpen={showSurpriseModal} 
+          onClose={() => setShowSurpriseModal(false)} 
+          name={name}
+          onShowSurprise={handleShowSurprise}
+        />
+      </BirthdayContext.Provider>
+    </TimeContext.Provider>
+  );
+};
+
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <TimeContext.Provider value={{ currentTime }}>
-          <BirthdayContext.Provider 
-            value={{ 
-              isBirthdayTime, 
-              setIsBirthdayTime,
-              showSurpriseModal, 
-              setShowSurpriseModal,
-              cakeCut,
-              setCakeCut: handleSetCakeCut
-            }}
-          >
-            <Toaster />
-            <Sonner />
-            <Router>
-              <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/cake" element={<CakeScene userName={name} />} />
-                <Route path="/gallery" element={<GalleryPage />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Router>
-            
-            {/* Add SurpriseModal outside of routes */}
-            <SurpriseModal 
-              isOpen={showSurpriseModal} 
-              onClose={() => setShowSurpriseModal(false)} 
-              name={name} 
-            />
-          </BirthdayContext.Provider>
-        </TimeContext.Provider>
+        <Router>
+          <AppContent />
+          <Toaster />
+          <Sonner />
+        </Router>
       </TooltipProvider>
     </QueryClientProvider>
   );
