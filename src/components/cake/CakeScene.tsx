@@ -412,6 +412,10 @@ export const CakeScene = ({ userName }: CakeSceneProps) => {
       <Confetti trigger={confetti} />
       <Sparkles trigger={revealStep === 5} />
       <div ref={canvasRef} className="absolute inset-0 z-0"></div>
+      
+      {/* Simple background instead of the custom one */}
+      <div className="fixed inset-0 bg-gradient-to-br from-birthday-pink via-birthday-purple to-birthday-blue -z-10"></div>
+      
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-white/30 backdrop-blur-sm z-50">
           <div className="flex flex-col items-center">
@@ -420,6 +424,7 @@ export const CakeScene = ({ userName }: CakeSceneProps) => {
           </div>
         </div>
       )}
+      
       {!isLoading && !showPopup && !showGallery && (
         <div className="absolute bottom-10 left-0 right-0 flex flex-col items-center z-10">
           <button
