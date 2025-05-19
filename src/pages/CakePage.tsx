@@ -1,9 +1,9 @@
+
 import { useContext, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { BirthdayContext } from "@/contexts/BirthdayContext";
 import { CakeScene } from "@/components/cake/CakeScene";
 import { CakeControls } from "@/components/cake/CakeControls";
-import { CakeBackground } from "@/components/cake/CakeBackground";
 import * as THREE from "three";
 
 const CakePage = () => {
@@ -61,9 +61,6 @@ const CakePage = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Background elements */}
-      <CakeBackground />
-      
       {/* 3D Cake Scene */}
       <CakeScene userName={userName} />
       
