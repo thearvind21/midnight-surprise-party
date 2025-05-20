@@ -55,75 +55,53 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
     // Lighting setup
     setupLighting(scene);
 
-    // --- Cake Construction ---
+    // --- Cake Construction for Reveal Animation ---
     const cakeGroup = new THREE.Group();
     
-    // Create left and right slice groups for cutting animation
-    const leftSlice = new THREE.Group();
-    const rightSlice = new THREE.Group();
-    cakeGroup.add(leftSlice);
-    cakeGroup.add(rightSlice);
-    leftSliceRef.current = leftSlice;
-    rightSliceRef.current = rightSlice;
-
-    // Groups for each reveal step
+    // Groups for each reveal step - will be scaled up
     const baseGroup = new THREE.Group();
     const tier1Group = new THREE.Group();
     const tier2Group = new THREE.Group();
     const tier3Group = new THREE.Group();
     const decoGroup = new THREE.Group();
 
-    // Add cake board
-    createCakeBoard(baseGroup);
+    // Add groups to the main cake group
     cakeGroup.add(baseGroup);
+    cakeGroup.add(tier1Group);
+    cakeGroup.add(tier2Group);
+    cakeGroup.add(tier3Group);
+    cakeGroup.add(decoGroup);
 
-    // Tier sizes
+    // Create and add cake components to their respective groups
+    createCakeBoard(baseGroup, activeTheme); // Add board to baseGroup
+
     const tiers = [
       { r: 2, h: 0.9, y: -0.6 },
       { r: 1.4, h: 0.8, y: 0.3 },
       { r: 0.8, h: 0.7, y: 1.0 },
     ];
-    const pastelGreen = 0xb6e2a1;
-    const glazeGreen = 0xc6f58c;
 
-    // Add tiers
-    createCakeTier(tiers[0], leftSlice, true, activeTheme);
-    createCakeTier(tiers[0], rightSlice, false, activeTheme);
-    tier1Group.add(leftSlice);
-    tier1Group.add(rightSlice);
-    cakeGroup.add(tier1Group);
-    
-    createCakeTier(tiers[1], leftSlice, true, activeTheme);
-    createCakeTier(tiers[1], rightSlice, false, activeTheme);
-    tier2Group.add(leftSlice);
-    tier2Group.add(rightSlice);
-    cakeGroup.add(tier2Group);
-    
-    createCakeTier(tiers[2], leftSlice, true, activeTheme);
-    createCakeTier(tiers[2], rightSlice, false, activeTheme);
-    tier3Group.add(leftSlice);
-    tier3Group.add(rightSlice);
-    cakeGroup.add(tier3Group);
+    // createCakeTier now adds directly to the provided group
+    createCakeTier(tiers[0], tier1Group, activeTheme); 
+    createCakeTier(tiers[1], tier2Group, activeTheme);
+    createCakeTier(tiers[2], tier3Group, activeTheme);
 
-    // Add decorations
-    addSucculentsAroundCake(leftSlice, rightSlice);
-    addPebbles(leftSlice, rightSlice);
-    flameRefs.current = addCandles(leftSlice, rightSlice);
-    createFlower(leftSlice, rightSlice);
-    
-    // Add all decoration groups to the cake
-    decoGroup.add(leftSlice);
-    decoGroup.add(rightSlice);
-    cakeGroup.add(decoGroup);
+    // Decoration functions now add directly to the provided group
+    addSucculentsAroundCake(decoGroup, activeTheme); 
+    addPebbles(decoGroup, activeTheme); 
+    flameRefs.current = addCandles(decoGroup, activeTheme); 
+    createFlower(decoGroup, activeTheme); 
 
     scene.add(cakeGroup);
     cakeGroupRef.current = cakeGroup;
     setIsLoading(false);
 
-    // Create sparkle particle system
-    // particleSystemRef.current = createSparkles(scene); // Commented out the call to createSparkles
-    // Comment out the line below to test if the sparkles texture is causing the WebGL error
-    // scene.add(particleSystemRef.current);
+    // Temporarily set slice refs to dummy groups for reveal focus
+    leftSliceRef.current = new THREE.Group(); 
+    rightSliceRef.current = new THREE.Group(); 
+
+    // Create sparkle particle system (re-enable if needed after WebGL error is resolved)
+    // particleSystemRef.current = createSparkles(scene);
 
     // Set initial scales for reveal - start small
     baseGroup.scale.set(0.01, 0.01, 0.01);
@@ -143,10 +121,10 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
       // Animate candle flames (flicker)
       animateFlames(flameRefs.current, t);
       
-      // Animate sparkle particles
-      if (particleSystemRef.current) {
-        animateParticles(particleSystemRef.current, t);
-      }
+      // Animate sparkle particles (re-enable if sparkles are created)
+      // if (particleSystemRef.current) {
+      //   animateParticles(particleSystemRef.current, t);
+      // }
       
       // Animate reveal (scale up each group)
       animateRevealScaling(
@@ -156,7 +134,7 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
         tier2Group,
         tier3Group,
         decoGroup,
-        cakeGroup
+        cakeGroup // Still passing cakeGroup, but scaling happens on individual groups
       );
       
       // Render with post-processing if available, otherwise use standard renderer
@@ -180,54 +158,35 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
         composerRef.current.setSize(window.innerWidth, window.innerHeight);
       }
     };
-    window.addEventListener('resize', handleResize);
 
-    // Cleanup
+    window.addEventListener('resize', handleResize);
+    
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (canvasRef.current) canvasRef.current.innerHTML = '';
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+      }
+      if (composerRef.current) {
+        // Dispose of passes if composer has a dispose method
+        // composerRef.current.passes.forEach((pass: any) => { if (pass.dispose) pass.dispose(); });
+      }
     };
-  }, [revealStep]);
+  }, [revealStep, activeTheme]); // Re-run effect if revealStep or activeTheme changes
 
-  // Apply external controls (rotation, zoom)
+  // Function to update cake rotation and zoom
   const updateCakeTransform = (rotation: number = 0, zoom: number = 1) => {
-    if (cakeGroupRef.current) {
+    if (cakeGroupRef.current && cameraRef.current) {
+      // Apply rotation around the Y-axis
       cakeGroupRef.current.rotation.y = rotation;
-    }
-    
-    if (cameraRef.current) {
-      cameraRef.current.position.z = 8 / zoom;
+
+      // Adjust camera position for zoom
+      // Assuming initial camera position is (0, 2, 8)
+      const initialCameraPosition = new THREE.Vector3(0, 2, 8);
+      const zoomedPosition = initialCameraPosition.clone().multiplyScalar(1 / zoom);
+      cameraRef.current.position.copy(zoomedPosition);
+      cameraRef.current.lookAt(0, 0, 0);
     }
   };
 
-  // Idle floating animation
-  const [idleFloatOffset, setIdleFloatOffset] = useState(0);
-  
-  useEffect(() => {
-    let animationFrameId: number;
-    const animate = () => {
-      setIdleFloatOffset(prev => (prev + 0.01) % (Math.PI * 2));
-      animationFrameId = requestAnimationFrame(animate);
-    };
-    
-    animationFrameId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, []);
-  
-  // Apply floating effect to cake
-  useEffect(() => {
-    if (cakeGroupRef.current) {
-      const floatHeight = Math.sin(idleFloatOffset) * 0.1;
-      cakeGroupRef.current.position.y = floatHeight;
-    }
-  }, [idleFloatOffset]);
-
-  return {
-    canvasRef,
-    isLoading,
-    cakeCutRef,
-    leftSliceRef,
-    rightSliceRef,
-    updateCakeTransform
-  };
+  return { canvasRef, isLoading, leftSliceRef, rightSliceRef, updateCakeTransform };
 };

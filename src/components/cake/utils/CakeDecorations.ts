@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { createSucculentMaterial, createFlameMaterial, createPetalMaterial, getPebbleColor } from "./CakeMaterials";
-import { getTargetGroup } from "./CakeBuilder";
+// import { getTargetGroup } from "./CakeBuilder"; // Comment out getTargetGroup import
 
 export const createSucculent = (
   x: number, 
@@ -74,11 +74,10 @@ export const createSucculent = (
   return group;
 };
 
-export const addSucculentsAroundCake = (leftSlice: THREE.Group, rightSlice: THREE.Group, theme: string = 'default') => {
+export const addSucculentsAroundCake = (targetGroup: THREE.Group, theme: string = 'default') => {
   // Add succulents around the cake
   for (let i = 0; i < 10; i++) {
     const angle = (i / 10) * Math.PI * 2;
-    const targetGroup = getTargetGroup(angle, leftSlice, rightSlice);
     createSucculent(
       Math.cos(angle) * 1.7, 
       -0.2, 
@@ -115,7 +114,7 @@ export const addSucculentsAroundCake = (leftSlice: THREE.Group, rightSlice: THRE
   }
 };
 
-export const addPebbles = (leftSlice: THREE.Group, rightSlice: THREE.Group, theme: string = 'default') => {
+export const addPebbles = (targetGroup: THREE.Group, theme: string = 'default') => {
   for (let i = 0; i < 16; i++) {
     const angle = (i / 16) * Math.PI * 2;
     const pebbleGeo = new THREE.SphereGeometry(0.09 + Math.random() * 0.05, 8, 8);
@@ -129,17 +128,15 @@ export const addPebbles = (leftSlice: THREE.Group, rightSlice: THREE.Group, them
       -1.0 + Math.random() * 0.05, 
       Math.sin(angle) * 2.7
     );
-    const targetGroup = getTargetGroup(angle, leftSlice, rightSlice);
     targetGroup.add(pebble);
   }
 };
 
-export const addCandles = (leftSlice: THREE.Group, rightSlice: THREE.Group, theme: string = 'default'): THREE.Mesh[] => {
+export const addCandles = (targetGroup: THREE.Group, theme: string = 'default'): THREE.Mesh[] => {
   const flames: THREE.Mesh[] = [];
   
   for (let i = 0; i < 5; i++) {
     const angle = (i / 5) * Math.PI * 2;
-    const targetGroup = getTargetGroup(angle, leftSlice, rightSlice);
     
     const candleGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.35, 8);
     const candleMat = new THREE.MeshPhysicalMaterial({ 
@@ -168,7 +165,7 @@ export const addCandles = (leftSlice: THREE.Group, rightSlice: THREE.Group, them
   return flames;
 };
 
-export const createFlower = (leftSlice: THREE.Group, rightSlice: THREE.Group, theme: string = 'default') => {
+export const createFlower = (targetGroup: THREE.Group, theme: string = 'default') => {
   // Create prettier petals with more realistic materials
   for (let i = 0; i < 12; i++) {
     const angle = (i / 12) * Math.PI * 2;
@@ -188,7 +185,6 @@ export const createFlower = (leftSlice: THREE.Group, rightSlice: THREE.Group, th
     petal.castShadow = true;
     
     // Determine which half of the cake this petal belongs to
-    const targetGroup = getTargetGroup(angle, leftSlice, rightSlice);
     targetGroup.add(petal);
   }
   
@@ -212,7 +208,6 @@ export const createFlower = (leftSlice: THREE.Group, rightSlice: THREE.Group, th
     petal.castShadow = true;
     
     // Determine which half of the cake this petal belongs to
-    const targetGroup = getTargetGroup(angle, leftSlice, rightSlice);
     targetGroup.add(petal);
   }
   
@@ -225,16 +220,22 @@ export const createFlower = (leftSlice: THREE.Group, rightSlice: THREE.Group, th
   });
   
   // Create left half sphere
-  const centerLeft = new THREE.Mesh(flowerCenterGeo, flowerCenterMat);
-  centerLeft.position.set(-0.01, 1.68, 0);
-  centerLeft.castShadow = true;
-  leftSlice.add(centerLeft);
+  // const centerLeft = new THREE.Mesh(flowerCenterGeo, flowerCenterMat);
+  // centerLeft.position.set(-0.01, 1.68, 0);
+  // centerLeft.castShadow = true;
+  // leftSlice.add(centerLeft);
   
   // Create right half sphere
-  const centerRight = new THREE.Mesh(flowerCenterGeo, flowerCenterMat);
-  centerRight.position.set(0.01, 1.68, 0);
-  centerRight.castShadow = true;
-  rightSlice.add(centerRight);
+  // const centerRight = new THREE.Mesh(flowerCenterGeo, flowerCenterMat);
+  // centerRight.position.set(0.01, 1.68, 0);
+  // centerRight.castShadow = true;
+  // rightSlice.add(centerRight);
+
+  // Add a single flower center to the target group
+  const flowerCenterMesh = new THREE.Mesh(flowerCenterGeo, flowerCenterMat);
+  flowerCenterMesh.position.set(0, 1.68, 0); // Center the sphere
+  flowerCenterMesh.castShadow = true;
+  targetGroup.add(flowerCenterMesh); // Add to the target group
 };
 
 // Add themes object for use within this file

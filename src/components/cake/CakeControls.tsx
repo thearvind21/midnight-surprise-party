@@ -63,7 +63,7 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
               <Sparkles className="h-6 w-6" />
             </Button>
           ) : (
-            <div className="animate-scale-in flex flex-col items-center justify-center text-center">
+            <div className="animate-scale-in flex flex-col items-center justify-center text-center w-full">
               <h2 className="text-2xl font-display mb-4 text-white text-shadow-md">Making a wish! 🎂✨</h2>
               {cuttingAnimation && !cakeCut && (
                 <p className="mb-4 text-white text-shadow-sm">Cutting the cake...</p>
