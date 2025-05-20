@@ -1,4 +1,3 @@
-
 import { Toaster } from "./components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,26 +24,23 @@ const AppContent = () => {
 
   // Check if it's midnight
   useEffect(() => {
+    // The original interval check is commented out to allow testing at any time.
     // const timer = setInterval(() => {
     //   const now = new Date();
     //   setCurrentTime(now);
       
     //   // Check if it's midnight (12:00 AM)
     //   if (now.getHours() === 0 && now.getMinutes() === 0) {
-        setIsBirthdayTime(true);
+    //     setIsBirthdayTime(true);
     //     setShowSurpriseModal(true);
     //   }
     // }, 1000);
     
     // return () => clearInterval(timer);
-  }, []);
 
-  // For demo purposes, set birthday time immediately
-  useEffect(() => {
-    // Comment this out in production if you want to only show on actual birthday
+    // This line ensures isBirthdayTime is true for demonstration/testing purposes.
     setIsBirthdayTime(true);
-    // Uncomment below if you want to show the modal immediately for testing
-    // setShowSurpriseModal(true);
+
   }, []);
 
   // Function to set cake as cut
