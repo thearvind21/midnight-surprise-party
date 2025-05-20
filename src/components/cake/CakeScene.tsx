@@ -44,6 +44,14 @@ export const CakeScene = ({ userName, rotation = 0, zoom = 1, activeTheme }: Cak
       
       {isLoading && <CakeLoadingOverlay />}
       
+      {!showGallery && (
+        <CakeRevealButtons
+          revealStep={revealStep}
+          revealBtnDisabled={revealBtnDisabled}
+          handleRevealNext={handleRevealNext}
+        />
+      )}
+      
       {showPopup && !showGallery && (
         <CakeBirthdayPopup
           userName={userName}

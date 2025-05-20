@@ -104,11 +104,11 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
     // particleSystemRef.current = createSparkles(scene);
 
     // Set initial scales for reveal - start small
-    baseGroup.scale.set(0.01, 0.01, 0.01);
-    tier1Group.scale.set(0.01, 0.01, 0.01);
-    tier2Group.scale.set(0.01, 0.01, 0.01);
-    tier3Group.scale.set(0.01, 0.01, 0.01);
-    decoGroup.scale.set(0.01, 0.01, 0.01);
+    baseGroup.scale.set(0.1, 0.1, 0.1);
+    tier1Group.scale.set(0.1, 0.1, 0.1);
+    tier2Group.scale.set(0.1, 0.1, 0.1);
+    tier3Group.scale.set(0.1, 0.1, 0.1);
+    decoGroup.scale.set(0.1, 0.1, 0.1);
 
     // Animation loop
     let startTime = Date.now();

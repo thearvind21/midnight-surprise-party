@@ -1,4 +1,3 @@
-
 import * as THREE from "three";
 
 export const cutCakeAnimationImpl = (
@@ -78,20 +77,23 @@ export const animateRevealScaling = (
   decoGroup: THREE.Group,
   cakeGroup: THREE.Group
 ) => {
+  const targetScale = new THREE.Vector3(1, 1, 1);
+  const lerpFactor = 0.1; // Slower, smoother animation
+
   if (revealStep >= 1) {
-    baseGroup.scale.lerp(new THREE.Vector3(1, 1, 1), 0.15);
+    baseGroup.scale.lerp(targetScale, lerpFactor);
   }
   if (revealStep >= 2) {
-    tier1Group.scale.lerp(new THREE.Vector3(1, 1, 1), 0.15);
+    tier1Group.scale.lerp(targetScale, lerpFactor);
   }
   if (revealStep >= 3) {
-    tier2Group.scale.lerp(new THREE.Vector3(1, 1, 1), 0.15);
+    tier2Group.scale.lerp(targetScale, lerpFactor);
   }
   if (revealStep >= 4) {
-    tier3Group.scale.lerp(new THREE.Vector3(1, 1, 1), 0.15);
+    tier3Group.scale.lerp(targetScale, lerpFactor);
   }
   if (revealStep >= 5) {
-    decoGroup.scale.lerp(new THREE.Vector3(1, 1, 1), 0.15);
+    decoGroup.scale.lerp(targetScale, lerpFactor);
     
     // Create and manage glow mesh if not already created
     let glowMesh = cakeGroup.children.find(child => 
