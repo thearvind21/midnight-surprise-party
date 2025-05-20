@@ -91,12 +91,12 @@ const CakePage = () => {
   return (
     <div className="min-h-screen w-full flex flex-col overflow-hidden relative">
       {/* Cake Scene with proper z-index */}
-      <CakeScene 
+      {/* <CakeScene 
         userName={userName} 
         rotation={cakeRotation}
         zoom={cakeZoom}
         activeTheme={activeTheme}
-      />
+      /> */}
       
       {/* Interactive controls panel with glass effect */}
       <div className="fixed top-4 left-4 z-[100] flex flex-col gap-3">
