@@ -121,7 +121,7 @@ export const useCakeScene = (revealStep: number) => {
     setIsLoading(false);
 
     // Create sparkle particle system
-    particleSystemRef.current = createSparkles(scene);
+    // particleSystemRef.current = createSparkles(scene); // Commented out the call to createSparkles
     // Comment out the line below to test if the sparkles texture is causing the WebGL error
     // scene.add(particleSystemRef.current);
 
@@ -153,14 +153,9 @@ export const useCakeScene = (revealStep: number) => {
       );
       
       // Render with post-processing if available, otherwise use standard renderer
-      // if (composerRef.current) {
-      //   composerRef.current.render();
-      // } else if (rendererRef.current) {
-      //   rendererRef.current.render(scene, camera);
-      // }
-      
-      // Temporarily force standard renderer to debug WebGL error
-      if (rendererRef.current) {
+      if (composerRef.current) {
+        composerRef.current.render();
+      } else if (rendererRef.current) {
         rendererRef.current.render(scene, camera);
       }
     };
