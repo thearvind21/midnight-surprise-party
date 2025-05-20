@@ -1,6 +1,7 @@
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import * as THREE from "three";
 import { cutCakeAnimationImpl } from "../utils/CakeAnimations";
 import { useAudio } from "./useAudio";
 
@@ -70,5 +71,3 @@ export const useCakeCut = () => {
     cutCakeAnimation
   };
 };
-
-import { useState } from "react";
