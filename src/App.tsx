@@ -21,18 +21,18 @@ const App = () => {
 
   // Check if it's midnight
   useEffect(() => {
-    const timer = setInterval(() => {
-      const now = new Date();
-      setCurrentTime(now);
+    // const timer = setInterval(() => {
+    //   const now = new Date();
+    //   setCurrentTime(now);
       
-      // Check if it's midnight (12:00 AM)
-      if (now.getHours() === 0 && now.getMinutes() === 0) {
+    //   // Check if it's midnight (12:00 AM)
+    //   if (now.getHours() === 0 && now.getMinutes() === 0) {
         setIsBirthdayTime(true);
-        setShowSurpriseModal(true);
-      }
-    }, 1000);
+    //     setShowSurpriseModal(true);
+    //   }
+    // }, 1000);
     
-    return () => clearInterval(timer);
+    // return () => clearInterval(timer);
   }, []);
 
   return (
