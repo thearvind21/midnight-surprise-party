@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Volume2, VolumeX, Sparkles, RotateCcw, RotateCw, ZoomIn, ZoomOut, Palette, Scissors } from "lucide-react";
+import { Volume2, VolumeX, Sparkles, RotateCcw, RotateCw, ZoomIn, ZoomOut, Palette, Scissors, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface CakeControlsProps {
@@ -42,7 +42,7 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
   return (
     <>
       {/* Main controls */}
-      <div className="z-10 p-6 text-center relative">
+      <div className="z-20 p-6 text-center relative">
         <div className="glass-card p-8 rounded-2xl backdrop-blur-md bg-white/30 border border-white/50 shadow-xl">
           <h1 className="text-4xl md:text-6xl font-display font-bold mb-8 text-white text-shadow-lg animate-fade-in">
             Happy Birthday, {userName}!
@@ -155,13 +155,14 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
         </Button>
       </div>
       
-      {/* Go back button with enhanced styling */}
-      <div className="absolute bottom-4 left-4 z-20">
+      {/* Return Home button positioned on the right side */}
+      <div className="absolute bottom-4 right-4 z-20">
         <Button
           variant="outline"
           onClick={() => navigate("/")}
-          className="glass-button bg-white/30 backdrop-blur-sm hover:bg-white/40 text-white border-white/50 hover:scale-105 transition-all"
+          className="glass-button bg-white/30 backdrop-blur-sm hover:bg-white/40 text-white border-white/50 hover:scale-105 transition-all shadow-lg flex items-center gap-2"
         >
+          <Home className="h-5 w-5" />
           Return Home
         </Button>
       </div>

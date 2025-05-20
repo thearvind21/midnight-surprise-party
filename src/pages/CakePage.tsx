@@ -15,8 +15,6 @@ const CakePage = () => {
   const [cakeRotation, setCakeRotation] = useState(0);
   const [cakeZoom, setCakeZoom] = useState(1);
   const [activeTheme, setActiveTheme] = useState("default");
-  const [forceRender, setForceRender] = useState(0);
-  const [isInitialized, setIsInitialized] = useState(false);
   
   // Redirect if not birthday time yet
   useEffect(() => {
@@ -35,19 +33,6 @@ const CakePage = () => {
       }
     };
   }, [isBirthdayTime, navigate]);
-
-  // Ensure the cake scene renders correctly on first load
-  useEffect(() => {
-    if (!isInitialized) {
-      // Force re-render after a short delay to ensure everything is loaded
-      const timer = setTimeout(() => {
-        setForceRender(prev => prev + 1);
-        setIsInitialized(true);
-      }, 500); // Increased delay for better rendering
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isInitialized]);
 
   const handleCutCake = () => {
     // Start cutting animation first
@@ -92,51 +77,28 @@ const CakePage = () => {
     setActiveTheme(theme);
   };
   
-  // Define background styles based on active theme
-  const getBackgroundStyle = () => {
-    switch(activeTheme) {
-      case 'pastel':
-        return 'bg-gradient-to-br from-pink-200 via-blue-100 to-green-200';
-      case 'vibrant':
-        return 'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500';
-      case 'night':
-        return 'bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900';
-      case 'forest':
-        return 'bg-gradient-to-br from-emerald-500 to-teal-800';
-      default:
-        return 'bg-gradient-to-br from-pink-300 via-purple-300 to-blue-300';
-    }
-  };
-
-  // Use CSS grid for better layout control
   return (
-    <div className={`min-h-screen w-full flex flex-col relative ${getBackgroundStyle()} transition-colors duration-1000`}>
-      {/* Cake Scene Container - with higher z-index */}
-      <div className="absolute inset-0 z-10" key={forceRender}>
-        <CakeScene 
-          userName={userName} 
-          rotation={cakeRotation}
-          zoom={cakeZoom}
-        />
-      </div>
+    <div className="min-h-screen w-full flex flex-col overflow-hidden relative">
+      {/* Cake Scene with proper z-index */}
+      <CakeScene 
+        userName={userName} 
+        rotation={cakeRotation}
+        zoom={cakeZoom}
+      />
       
-      {/* Controls and UI elements - positioned with higher z-index */}
-      <div className="relative z-20 w-full h-full pointer-events-none">
-        <div className="pointer-events-auto">
-          <CakeControls 
-            isMusicPlaying={isMusicPlaying}
-            toggleMusic={toggleMusic}
-            handleCutCake={handleCutCake}
-            cakeCut={cakeCut}
-            cuttingAnimation={cuttingAnimation}
-            userName={userName}
-            onRotateCake={handleRotateCake}
-            onZoomCake={handleZoomCake}
-            onChangeTheme={changeTheme}
-            activeTheme={activeTheme}
-          />
-        </div>
-      </div>
+      {/* Controls with higher z-index */}
+      <CakeControls 
+        isMusicPlaying={isMusicPlaying}
+        toggleMusic={toggleMusic}
+        handleCutCake={handleCutCake}
+        cakeCut={cakeCut}
+        cuttingAnimation={cuttingAnimation}
+        userName={userName}
+        onRotateCake={handleRotateCake}
+        onZoomCake={handleZoomCake}
+        onChangeTheme={changeTheme}
+        activeTheme={activeTheme}
+      />
     </div>
   );
 };

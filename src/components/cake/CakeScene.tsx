@@ -15,10 +15,10 @@ import CakeGalleryView from "./components/CakeGalleryView";
 
 export const CakeScene = ({ userName, rotation = 0, zoom = 1 }: CakeSceneProps) => {
   // Custom hooks for different aspects of the cake scene
-  const { revealStep, revealBtnDisabled, confetti, setConfetti, handleRevealNext } = useCakeReveal();
+  const { revealStep, revealBtnDisabled, confetti: revealConfetti, setConfetti: setRevealConfetti, handleRevealNext } = useCakeReveal();
   const { 
     cakeCutRef, showPopup, setShowPopup, showGalleryBtn, setShowGalleryBtn, 
-    showGallery, setShowGallery, cuttingAnimation, cutCakeAnimation 
+    showGallery, setShowGallery, cuttingAnimation, confetti: cutConfetti, setConfetti: setCutConfetti, cutCakeAnimation 
   } = useCakeCut();
   const { canvasRef, isLoading, leftSliceRef, rightSliceRef, updateCakeTransform } = useCakeScene(revealStep);
 
@@ -34,9 +34,11 @@ export const CakeScene = ({ userName, rotation = 0, zoom = 1 }: CakeSceneProps) 
 
   return (
     <>
-      <Confetti trigger={confetti} />
+      <Confetti trigger={revealConfetti || cutConfetti} />
       <Sparkles trigger={revealStep === 5} />
-      <div ref={canvasRef} className="absolute inset-0 z-0"></div>
+      
+      {/* Canvas container with higher z-index */}
+      <div ref={canvasRef} className="absolute inset-0 z-10"></div>
       
       {/* Simple background */}
       <div className="fixed inset-0 bg-gradient-to-br from-birthday-pink via-birthday-purple to-birthday-blue -z-10"></div>
@@ -58,7 +60,7 @@ export const CakeScene = ({ userName, rotation = 0, zoom = 1 }: CakeSceneProps) 
           userName={userName}
           setShowPopup={setShowPopup}
           setShowGalleryBtn={setShowGalleryBtn}
-          setConfetti={setConfetti}
+          setConfetti={setCutConfetti}
         />
       )}
       
