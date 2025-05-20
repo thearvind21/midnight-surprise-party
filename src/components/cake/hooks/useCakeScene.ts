@@ -103,12 +103,32 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
     // Create sparkle particle system (re-enable if needed after WebGL error is resolved)
     // particleSystemRef.current = createSparkles(scene);
 
-    // Set initial scales for reveal - start small
-    baseGroup.scale.set(0.1, 0.1, 0.1);
-    tier1Group.scale.set(0.1, 0.1, 0.1);
-    tier2Group.scale.set(0.1, 0.1, 0.1);
-    tier3Group.scale.set(0.1, 0.1, 0.1);
-    decoGroup.scale.set(0.1, 0.1, 0.1);
+    // Set initial scales for reveal - start with larger initial scale
+    baseGroup.scale.set(0.2, 0.2, 0.2);
+    tier1Group.scale.set(0.2, 0.2, 0.2);
+    tier2Group.scale.set(0.2, 0.2, 0.2);
+    tier3Group.scale.set(0.2, 0.2, 0.2);
+    decoGroup.scale.set(0.2, 0.2, 0.2);
+
+    // Animation timing variables
+    const animationStartTimes = useRef({
+      base: Date.now(),
+      tier1: Date.now() + 500,  // 500ms delay
+      tier2: Date.now() + 1000, // 1000ms delay
+      tier3: Date.now() + 1500, // 1500ms delay
+      deco: Date.now() + 2000   // 2000ms delay
+    });
+
+    // Reset animation times when reveal step changes
+    useEffect(() => {
+      animationStartTimes.current = {
+        base: Date.now(),
+        tier1: Date.now() + 500,
+        tier2: Date.now() + 1000,
+        tier3: Date.now() + 1500,
+        deco: Date.now() + 2000
+      };
+    }, [revealStep]);
 
     // Animation loop
     let startTime = Date.now();
@@ -121,11 +141,6 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
       // Animate candle flames (flicker)
       animateFlames(flameRefs.current, t);
       
-      // Animate sparkle particles (re-enable if sparkles are created)
-      // if (particleSystemRef.current) {
-      //   animateParticles(particleSystemRef.current, t);
-      // }
-      
       // Animate reveal (scale up each group)
       animateRevealScaling(
         revealStep,
@@ -134,7 +149,8 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
         tier2Group,
         tier3Group,
         decoGroup,
-        cakeGroup // Still passing cakeGroup, but scaling happens on individual groups
+        cakeGroup,
+        animationStartTimes.current
       );
       
       // Render with post-processing if available, otherwise use standard renderer

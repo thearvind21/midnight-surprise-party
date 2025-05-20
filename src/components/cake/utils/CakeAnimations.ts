@@ -75,25 +75,56 @@ export const animateRevealScaling = (
   tier2Group: THREE.Group,
   tier3Group: THREE.Group,
   decoGroup: THREE.Group,
-  cakeGroup: THREE.Group
+  cakeGroup: THREE.Group,
+  animationTimes: {
+    base: number;
+    tier1: number;
+    tier2: number;
+    tier3: number;
+    deco: number;
+  }
 ) => {
   const targetScale = new THREE.Vector3(1, 1, 1);
-  const lerpFactor = 0.1; // Slower, smoother animation
+  const lerpFactor = 0.03; // Even slower for smoother animation
 
+  // Custom easing function for smoother animation
+  const easeOutCubic = (x: number): number => {
+    return 1 - Math.pow(1 - x, 3);
+  };
+
+  // Base layer animation
   if (revealStep >= 1) {
-    baseGroup.scale.lerp(targetScale, lerpFactor);
+    const progress = Math.min((Date.now() - animationTimes.base) / 1000, 1);
+    const easedProgress = easeOutCubic(progress);
+    baseGroup.scale.lerp(targetScale, lerpFactor * easedProgress);
   }
+
+  // First tier
   if (revealStep >= 2) {
-    tier1Group.scale.lerp(targetScale, lerpFactor);
+    const progress = Math.min((Date.now() - animationTimes.tier1) / 1000, 1);
+    const easedProgress = easeOutCubic(progress);
+    tier1Group.scale.lerp(targetScale, lerpFactor * easedProgress);
   }
+
+  // Second tier
   if (revealStep >= 3) {
-    tier2Group.scale.lerp(targetScale, lerpFactor);
+    const progress = Math.min((Date.now() - animationTimes.tier2) / 1000, 1);
+    const easedProgress = easeOutCubic(progress);
+    tier2Group.scale.lerp(targetScale, lerpFactor * easedProgress);
   }
+
+  // Third tier
   if (revealStep >= 4) {
-    tier3Group.scale.lerp(targetScale, lerpFactor);
+    const progress = Math.min((Date.now() - animationTimes.tier3) / 1000, 1);
+    const easedProgress = easeOutCubic(progress);
+    tier3Group.scale.lerp(targetScale, lerpFactor * easedProgress);
   }
+
+  // Decorations
   if (revealStep >= 5) {
-    decoGroup.scale.lerp(targetScale, lerpFactor);
+    const progress = Math.min((Date.now() - animationTimes.deco) / 1000, 1);
+    const easedProgress = easeOutCubic(progress);
+    decoGroup.scale.lerp(targetScale, lerpFactor * easedProgress);
     
     // Create and manage glow mesh if not already created
     let glowMesh = cakeGroup.children.find(child => 
@@ -114,9 +145,11 @@ export const animateRevealScaling = (
       cakeGroup.add(glowMesh);
     }
     
-    // Fade in glow
+    // Fade in glow with smoother transition
     if (glowMesh.material instanceof THREE.MeshBasicMaterial) {
-      glowMesh.material.opacity = Math.min(0.18, glowMesh.material.opacity + 0.01);
+      const glowProgress = Math.min((Date.now() - animationTimes.deco) / 2000, 1);
+      const easedGlowProgress = easeOutCubic(glowProgress);
+      glowMesh.material.opacity = Math.min(0.18, easedGlowProgress * 0.18);
     }
   } else {
     // Remove glow when not in final step
