@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { BirthdayContext } from "@/contexts/BirthdayContext";
 import { CakeScene } from "@/components/cake/CakeScene";
 import { CakeControls } from "@/components/cake/CakeControls";
+import { useCakeCut } from "@/components/cake/hooks/useCakeCut";
+import { useCakeScene } from "@/components/cake/hooks/useCakeScene";
+import { useCakeReveal } from "@/components/cake/hooks/useCakeReveal";
 
 const CakePage = () => {
   const { isBirthdayTime, cakeCut, setCakeCut } = useContext(BirthdayContext);
@@ -14,6 +17,16 @@ const CakePage = () => {
   const [cakeRotation, setCakeRotation] = useState(0);
   const [cakeZoom, setCakeZoom] = useState(1);
   const [activeTheme, setActiveTheme] = useState("default");
+
+  // Destructure reveal related values from useCakeReveal FIRST
+  const { revealStep, revealBtnDisabled, handleRevealNext } = useCakeReveal();
+
+  // Now call other hooks, passing revealStep to useCakeScene
+  const { 
+    cakeCutRef, showPopup, setShowPopup, showGalleryBtn, setShowGalleryBtn, 
+    showGallery, setShowGallery, cuttingAnimation: cutAnimation, confetti: cutConfetti, setConfetti: setCutConfetti, cutCakeAnimation 
+  } = useCakeCut();
+  const { canvasRef, isLoading, leftSliceRef, rightSliceRef, updateCakeTransform } = useCakeScene(revealStep, activeTheme);
   
   // Redirect if not birthday time yet
   useEffect(() => {
@@ -98,6 +111,9 @@ const CakePage = () => {
           onZoomCake={handleZoomCake}
           onChangeTheme={changeTheme}
           activeTheme={activeTheme}
+          revealStep={revealStep}
+          revealBtnDisabled={revealBtnDisabled}
+          handleRevealNext={handleRevealNext}
         />
       </div>
     </div>

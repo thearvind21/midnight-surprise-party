@@ -125,6 +125,13 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
     // Comment out the line below to test if the sparkles texture is causing the WebGL error
     // scene.add(particleSystemRef.current);
 
+    // Set initial scales for reveal - start small
+    baseGroup.scale.set(0.01, 0.01, 0.01);
+    tier1Group.scale.set(0.01, 0.01, 0.01);
+    tier2Group.scale.set(0.01, 0.01, 0.01);
+    tier3Group.scale.set(0.01, 0.01, 0.01);
+    decoGroup.scale.set(0.01, 0.01, 0.01);
+
     // Animation loop
     let startTime = Date.now();
     const animate = () => {

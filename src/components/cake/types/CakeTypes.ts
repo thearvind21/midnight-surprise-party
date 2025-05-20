@@ -28,6 +28,9 @@ export interface CakeControlsProps {
   onZoomCake: (direction: 'in' | 'out') => void;
   onChangeTheme: (theme: string) => void;
   activeTheme: string;
+  revealStep: number;
+  revealBtnDisabled: boolean;
+  handleRevealNext: () => void;
 }
 
 // Animation callbacks

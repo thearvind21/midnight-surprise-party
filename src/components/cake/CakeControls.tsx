@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Volume2, VolumeX, Sparkles, RotateCcw, RotateCw, ZoomIn, ZoomOut, Palette, Scissors, Home } from "lucide-react";
@@ -15,6 +14,9 @@ interface CakeControlsProps {
   onZoomCake?: (direction: 'in' | 'out') => void;
   onChangeTheme?: (theme: string) => void;
   activeTheme?: string;
+  revealStep: number;
+  handleRevealNext: () => void;
+  revealBtnDisabled: boolean;
 }
 
 export const CakeControls: React.FC<CakeControlsProps> = ({ 
@@ -27,7 +29,10 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
   onRotateCake,
   onZoomCake,
   onChangeTheme,
-  activeTheme = 'default'
+  activeTheme = 'default',
+  revealStep,
+  handleRevealNext,
+  revealBtnDisabled
 }) => {
   const navigate = useNavigate();
   
@@ -58,7 +63,7 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
               <Sparkles className="h-6 w-6" />
             </Button>
           ) : (
-            <div className="animate-scale-in">
+            <div className="animate-scale-in flex flex-col items-center justify-center text-center">
               <h2 className="text-2xl font-display mb-4 text-white text-shadow-md">Making a wish! 🎂✨</h2>
               {cuttingAnimation && !cakeCut && (
                 <p className="mb-4 text-white text-shadow-sm">Cutting the cake...</p>
@@ -71,6 +76,20 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
               )}
             </div>
           )}
+
+          {/* Add Next Layer button - visible when not cutting and not yet fully revealed */}
+          {!cakeCut && !cuttingAnimation && revealStep < 5 && (
+             <Button
+              onClick={handleRevealNext}
+              disabled={revealBtnDisabled}
+              className="mt-4 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-full shadow-lg text-lg transition-all transform hover:scale-105"
+            >
+              {revealStep === 0 && "Start Building Cake!"}
+              {revealStep > 0 && revealStep < 4 && "Next Layer"}
+              {revealStep === 4 && "Final Touch!"}
+            </Button>
+          )}
+
         </div>
       </div>
       
