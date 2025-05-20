@@ -40,13 +40,14 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
   // Set up THREE.js scene
   useEffect(() => {
     if (!canvasRef.current) return;
-    canvasRef.current.innerHTML = '';
+    const canvasContainer = canvasRef.current;
+    canvasContainer.innerHTML = '';
 
     // Set up scene
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
       60,
-      window.innerWidth / window.innerHeight,
+      canvasContainer.clientWidth / canvasContainer.clientHeight,
       0.1,
       1000
     );
@@ -59,12 +60,12 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
       alpha: true,
       powerPreference: 'high-performance'
     });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    canvasRef.current.appendChild(renderer.domElement);
+    canvasContainer.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
     // Post-processing setup
@@ -151,30 +152,30 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
     };
     animate();
 
-    // Handle resize
-    const handleResize = () => {
-      if (!cameraRef.current || !rendererRef.current) return;
-      
-      cameraRef.current.aspect = window.innerWidth / window.innerHeight;
-      cameraRef.current.updateProjectionMatrix();
-      rendererRef.current.setSize(window.innerWidth, window.innerHeight);
-      
-      if (composerRef.current) {
-        composerRef.current.setSize(window.innerWidth, window.innerHeight);
+    // Handle resize using ResizeObserver
+    const resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        const { clientWidth, clientHeight } = entry.target;
+        if (cameraRef.current && rendererRef.current) {
+          cameraRef.current.aspect = clientWidth / clientHeight;
+          cameraRef.current.updateProjectionMatrix();
+          rendererRef.current.setSize(clientWidth, clientHeight);
+          if (composerRef.current) {
+            composerRef.current.setSize(clientWidth, clientHeight);
+          }
+        }
       }
-    };
+    });
 
-    window.addEventListener('resize', handleResize);
+    resizeObserver.observe(canvasContainer);
     
     return () => {
-      window.removeEventListener('resize', handleResize);
-      if (rendererRef.current) {
-        rendererRef.current.dispose();
-      }
+      renderer.dispose();
       if (composerRef.current) {
         // Dispose of passes if composer has a dispose method
         // composerRef.current.passes.forEach((pass: any) => { if (pass.dispose) pass.dispose(); });
       }
+      resizeObserver.disconnect();
     };
   }, [revealStep, activeTheme]);
 

@@ -19,11 +19,11 @@ interface CakeControlsProps {
   revealBtnDisabled: boolean;
 }
 
-export const CakeControls: React.FC<CakeControlsProps> = ({ 
-  isMusicPlaying, 
-  toggleMusic, 
-  handleCutCake, 
-  cakeCut, 
+export const CakeControls: React.FC<CakeControlsProps> = ({
+  isMusicPlaying,
+  toggleMusic,
+  handleCutCake,
+  cakeCut,
   cuttingAnimation,
   userName,
   onRotateCake,
@@ -46,52 +46,7 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
   
   return (
     <>
-      {/* Main controls */}
-      <div className="z-20 p-6 text-center relative">
-        <div className="glass-card p-8 rounded-2xl backdrop-blur-md bg-white/30 border border-white/50 shadow-xl">
-          <h1 className="text-4xl md:text-6xl font-display font-bold mb-8 text-white text-shadow-lg animate-fade-in">
-            Happy Birthday, {userName}!
-          </h1>
-          
-          {!cakeCut && !cuttingAnimation ? (
-            <Button
-              onClick={handleCutCake}
-              className="bg-birthday-gold hover:bg-birthday-gold/80 text-black font-medium px-8 py-6 text-xl animate-pulse-soft shadow-lg flex items-center gap-2 transform hover:scale-105 transition-all"
-            >
-              <Scissors className="h-6 w-6" />
-              Cut the Cake!
-              <Sparkles className="h-6 w-6" />
-            </Button>
-          ) : (
-            <div className="animate-scale-in flex flex-col items-center justify-center text-center w-full">
-              <h2 className="text-2xl font-display mb-4 text-white text-shadow-md">Making a wish! 🎂✨</h2>
-              {cuttingAnimation && !cakeCut && (
-                <p className="mb-4 text-white text-shadow-sm">Cutting the cake...</p>
-              )}
-              {cakeCut && (
-                <>
-                  <p className="mb-4 text-white text-shadow-sm">Redirecting to your photo gallery...</p>
-                  <div className="w-12 h-12 border-4 border-birthday-gold border-t-transparent rounded-full animate-spin mx-auto"></div>
-                </>
-              )}
-            </div>
-          )}
-
-          {/* Add Next Layer button - visible when not cutting and not yet fully revealed */}
-          {/* {!cakeCut && !cuttingAnimation && revealStep < 5 && (
-             <Button
-              onClick={handleRevealNext}
-              disabled={revealBtnDisabled}
-              className="mt-4 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-full shadow-lg text-lg transition-all transform hover:scale-105"
-            >
-              {revealStep === 0 && "Start Building Cake!"}
-              {revealStep > 0 && revealStep < 4 && "Next Layer"}
-              {revealStep === 4 && "Final Touch!"}
-            </Button>
-          )} */}
-
-        </div>
-      </div>
+      {/* Main controls - Removed */}
       
       {/* Interactive controls panel with glass effect */}
       <div className="fixed top-4 left-4 z-20 flex flex-col gap-3">
