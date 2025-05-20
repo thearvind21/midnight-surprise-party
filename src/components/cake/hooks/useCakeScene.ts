@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { setupPostProcessing, setupLighting, createSparkles } from "../utils/CakeEffects";
@@ -117,19 +116,14 @@ export const useCakeScene = (revealStep: number) => {
     decoGroup.add(rightSlice);
     cakeGroup.add(decoGroup);
 
-    // Create sparkle particle system
-    particleSystemRef.current = createSparkles(scene);
-
-    // Set initial scales for reveal
-    baseGroup.scale.set(0.01, 0.01, 0.01);
-    tier1Group.scale.set(0.01, 0.01, 0.01);
-    tier2Group.scale.set(0.01, 0.01, 0.01);
-    tier3Group.scale.set(0.01, 0.01, 0.01);
-    decoGroup.scale.set(0.01, 0.01, 0.01);
-
     scene.add(cakeGroup);
     cakeGroupRef.current = cakeGroup;
     setIsLoading(false);
+
+    // Create sparkle particle system
+    particleSystemRef.current = createSparkles(scene);
+    // Comment out the line below to test if the sparkles texture is causing the WebGL error
+    // scene.add(particleSystemRef.current);
 
     // Animation loop
     let startTime = Date.now();

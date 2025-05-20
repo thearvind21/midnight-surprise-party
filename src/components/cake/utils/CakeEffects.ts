@@ -1,4 +1,3 @@
-
 import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
@@ -28,7 +27,7 @@ export const setupPostProcessing = (
   ssaoPass.kernelRadius = 16;
   ssaoPass.minDistance = 0.005;
   ssaoPass.maxDistance = 0.1;
-  composer.addPass(ssaoPass);
+  // composer.addPass(ssaoPass); // Commented out to test if SSAO is causing the WebGL error
   
   return composer;
 };
