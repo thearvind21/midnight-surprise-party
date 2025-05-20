@@ -1,6 +1,5 @@
-
 import * as THREE from "three";
-import { createSucculentMaterial, createFlameMaterial, createPetalMaterial } from "./CakeMaterials";
+import { createSucculentMaterial, createFlameMaterial, createPetalMaterial, getPebbleColor } from "./CakeMaterials";
 import { getTargetGroup } from "./CakeBuilder";
 
 export const createSucculent = (
@@ -8,7 +7,7 @@ export const createSucculent = (
   y: number, 
   z: number, 
   scale: number = 1, 
-  color: number = 0x8fd19e, 
+  theme: string = 'default',
   tall: boolean = false, 
   targetGroup: THREE.Group
 ) => {
@@ -22,7 +21,7 @@ export const createSucculent = (
     
     // Use more detailed geometry for leaves
     const leafGeo = new THREE.SphereGeometry(0.13 * scale, 12, 12);
-    const leafMat = createSucculentMaterial(color, i);
+    const leafMat = createSucculentMaterial(theme, i);
     
     const mesh = new THREE.Mesh(leafGeo, leafMat);
     mesh.position.set(sx, 0, sz);
@@ -33,7 +32,7 @@ export const createSucculent = (
   
   // Center part of the succulent
   const centerGeo = new THREE.SphereGeometry(0.12 * scale, 12, 12);
-  const centerMat = createSucculentMaterial(0xb6e2a1);
+  const centerMat = createSucculentMaterial(theme);
   
   const center = new THREE.Mesh(centerGeo, centerMat);
   center.castShadow = true;
@@ -47,7 +46,7 @@ export const createSucculent = (
       const leafGeo = new THREE.ConeGeometry(0.07 * scale, 0.5 * scale + Math.random() * 0.2, 8);
       
       // Enhanced leaf material
-      const leafColor = new THREE.Color(0x7fc97f);
+      const leafColor = new THREE.Color(createSucculentMaterial(theme).color);
       leafColor.offsetHSL(Math.random() * 0.1 - 0.05, 0, Math.random() * 0.1);
       
       const leafMat = new THREE.MeshPhysicalMaterial({ 
@@ -75,7 +74,7 @@ export const createSucculent = (
   return group;
 };
 
-export const addSucculentsAroundCake = (leftSlice: THREE.Group, rightSlice: THREE.Group) => {
+export const addSucculentsAroundCake = (leftSlice: THREE.Group, rightSlice: THREE.Group, theme: string = 'default') => {
   // Add succulents around the cake
   for (let i = 0; i < 10; i++) {
     const angle = (i / 10) * Math.PI * 2;
@@ -85,7 +84,7 @@ export const addSucculentsAroundCake = (leftSlice: THREE.Group, rightSlice: THRE
       -0.2, 
       Math.sin(angle) * 1.7, 
       1, 
-      0x8fd19e, 
+      theme,
       i % 3 === 0, 
       targetGroup
     );
@@ -96,7 +95,7 @@ export const addSucculentsAroundCake = (leftSlice: THREE.Group, rightSlice: THRE
         0.6, 
         Math.sin(angle) * 1.1, 
         0.7, 
-        0x9e8fd1, 
+        theme,
         i % 4 === 0, 
         targetGroup
       );
@@ -108,7 +107,7 @@ export const addSucculentsAroundCake = (leftSlice: THREE.Group, rightSlice: THRE
         1.3, 
         Math.sin(angle) * 0.6, 
         0.5, 
-        0xd1a98f, 
+        theme,
         i % 5 === 0, 
         targetGroup
       );
@@ -116,12 +115,12 @@ export const addSucculentsAroundCake = (leftSlice: THREE.Group, rightSlice: THRE
   }
 };
 
-export const addPebbles = (leftSlice: THREE.Group, rightSlice: THREE.Group) => {
+export const addPebbles = (leftSlice: THREE.Group, rightSlice: THREE.Group, theme: string = 'default') => {
   for (let i = 0; i < 16; i++) {
     const angle = (i / 16) * Math.PI * 2;
     const pebbleGeo = new THREE.SphereGeometry(0.09 + Math.random() * 0.05, 8, 8);
     const pebbleMat = new THREE.MeshPhongMaterial({ 
-      color: 0xcfcfcf + Math.floor(Math.random() * 0x30), 
+      color: getPebbleColor(theme),
       shininess: 30 
     });
     const pebble = new THREE.Mesh(pebbleGeo, pebbleMat);
@@ -135,7 +134,7 @@ export const addPebbles = (leftSlice: THREE.Group, rightSlice: THREE.Group) => {
   }
 };
 
-export const addCandles = (leftSlice: THREE.Group, rightSlice: THREE.Group): THREE.Mesh[] => {
+export const addCandles = (leftSlice: THREE.Group, rightSlice: THREE.Group, theme: string = 'default'): THREE.Mesh[] => {
   const flames: THREE.Mesh[] = [];
   
   for (let i = 0; i < 5; i++) {
@@ -144,7 +143,7 @@ export const addCandles = (leftSlice: THREE.Group, rightSlice: THREE.Group): THR
     
     const candleGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.35, 8);
     const candleMat = new THREE.MeshPhysicalMaterial({ 
-      color: 0xffffff, 
+      color: (themes as any)[theme]?.candle || themes.default.candle,
       roughness: 0.2,
       clearcoat: 0.8
     });
@@ -159,7 +158,7 @@ export const addCandles = (leftSlice: THREE.Group, rightSlice: THREE.Group): THR
     
     // Create improved flame with glowing material
     const flameGeo = new THREE.ConeGeometry(0.06, 0.13, 8);
-    const flameMat = createFlameMaterial();
+    const flameMat = createFlameMaterial(theme);
     const flame = new THREE.Mesh(flameGeo, flameMat);
     flame.position.set(0, 0.22, 0);
     candle.add(flame);
@@ -169,7 +168,7 @@ export const addCandles = (leftSlice: THREE.Group, rightSlice: THREE.Group): THR
   return flames;
 };
 
-export const createFlower = (leftSlice: THREE.Group, rightSlice: THREE.Group) => {
+export const createFlower = (leftSlice: THREE.Group, rightSlice: THREE.Group, theme: string = 'default') => {
   // Create prettier petals with more realistic materials
   for (let i = 0; i < 12; i++) {
     const angle = (i / 12) * Math.PI * 2;
@@ -177,7 +176,7 @@ export const createFlower = (leftSlice: THREE.Group, rightSlice: THREE.Group) =>
     // Create color gradient for petals
     const progress = i / 12;
     const petalGeo = new THREE.ConeGeometry(0.11, 0.36, 16);
-    const petalMat = createPetalMaterial(progress);
+    const petalMat = createPetalMaterial(progress, theme);
     const petal = new THREE.Mesh(petalGeo, petalMat);
     petal.position.set(
       Math.cos(angle) * 0.19, 
@@ -198,7 +197,7 @@ export const createFlower = (leftSlice: THREE.Group, rightSlice: THREE.Group) =>
     const angle = (i / 8) * Math.PI * 2;
     const petalGeo = new THREE.ConeGeometry(0.08, 0.22, 12);
     const petalMat = new THREE.MeshPhysicalMaterial({ 
-      color: 0xffb347, 
+      color: (themes as any)[theme]?.flowerPetalInner || themes.default.flowerPetalInner,
       roughness: 0.6,
       clearcoat: 0.2
     });
@@ -220,7 +219,7 @@ export const createFlower = (leftSlice: THREE.Group, rightSlice: THREE.Group) =>
   // Flower center - create two half-spheres
   const flowerCenterGeo = new THREE.SphereGeometry(0.09, 14, 14);
   const flowerCenterMat = new THREE.MeshPhysicalMaterial({ 
-    color: 0xffe066, 
+    color: (themes as any)[theme]?.flowerCenter || themes.default.flowerCenter,
     roughness: 0.3,
     clearcoat: 0.5
   });
@@ -236,4 +235,12 @@ export const createFlower = (leftSlice: THREE.Group, rightSlice: THREE.Group) =>
   centerRight.position.set(0.01, 1.68, 0);
   centerRight.castShadow = true;
   rightSlice.add(centerRight);
+};
+
+// Add themes object for use within this file
+const themes = {
+  default: { candle: 0xffffff, flowerPetalInner: 0xffb347, flowerCenter: 0xffe066 },
+  pastel: { candle: 0xffffff, flowerPetalInner: 0xffe066, flowerCenter: 0xffccee },
+  vibrant: { candle: 0xffffff, flowerPetalInner: 0xffff00, flowerCenter: 0xff1493 },
+  night: { candle: 0xcccccc, flowerPetalInner: 0x4682b4, flowerCenter: 0x00bfff },
 };

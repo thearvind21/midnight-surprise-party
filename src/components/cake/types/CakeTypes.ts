@@ -1,4 +1,3 @@
-
 import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 
@@ -14,6 +13,7 @@ export interface CakeSceneProps {
   userName: string;
   rotation?: number;
   zoom?: number;
+  activeTheme?: string;
 }
 
 // Props for cake controls

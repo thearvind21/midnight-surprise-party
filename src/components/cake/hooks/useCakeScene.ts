@@ -5,7 +5,7 @@ import { createCakeBoard, createCakeTier } from "../utils/CakeBuilder";
 import { addSucculentsAroundCake, addPebbles, addCandles, createFlower } from "../utils/CakeDecorations";
 import { animateFlames, animateParticles, animateRevealScaling } from "../utils/CakeAnimations";
 
-export const useCakeScene = (revealStep: number) => {
+export const useCakeScene = (revealStep: number, activeTheme: string) => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -87,20 +87,20 @@ export const useCakeScene = (revealStep: number) => {
     const glazeGreen = 0xc6f58c;
 
     // Add tiers
-    createCakeTier(tiers[0], leftSlice, true, pastelGreen, glazeGreen);
-    createCakeTier(tiers[0], rightSlice, false, pastelGreen, glazeGreen);
+    createCakeTier(tiers[0], leftSlice, true, activeTheme);
+    createCakeTier(tiers[0], rightSlice, false, activeTheme);
     tier1Group.add(leftSlice);
     tier1Group.add(rightSlice);
     cakeGroup.add(tier1Group);
     
-    createCakeTier(tiers[1], leftSlice, true, pastelGreen, glazeGreen);
-    createCakeTier(tiers[1], rightSlice, false, pastelGreen, glazeGreen);
+    createCakeTier(tiers[1], leftSlice, true, activeTheme);
+    createCakeTier(tiers[1], rightSlice, false, activeTheme);
     tier2Group.add(leftSlice);
     tier2Group.add(rightSlice);
     cakeGroup.add(tier2Group);
     
-    createCakeTier(tiers[2], leftSlice, true, pastelGreen, glazeGreen);
-    createCakeTier(tiers[2], rightSlice, false, pastelGreen, glazeGreen);
+    createCakeTier(tiers[2], leftSlice, true, activeTheme);
+    createCakeTier(tiers[2], rightSlice, false, activeTheme);
     tier3Group.add(leftSlice);
     tier3Group.add(rightSlice);
     cakeGroup.add(tier3Group);

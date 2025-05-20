@@ -82,6 +82,7 @@ const CakePage = () => {
         userName={userName} 
         rotation={cakeRotation}
         zoom={cakeZoom}
+        activeTheme={activeTheme}
       />
       
       {/* Interactive controls panel with glass effect */}

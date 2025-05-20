@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import * as THREE from "three";
 import Confetti from "@/components/Confetti";
@@ -13,14 +12,14 @@ import CakeBirthdayPopup from "./components/CakeBirthdayPopup";
 import CakeGalleryButton from "./components/CakeGalleryButton";
 import CakeGalleryView from "./components/CakeGalleryView";
 
-export const CakeScene = ({ userName, rotation = 0, zoom = 1 }: CakeSceneProps) => {
+export const CakeScene = ({ userName, rotation = 0, zoom = 1, activeTheme }: CakeSceneProps) => {
   // Custom hooks for different aspects of the cake scene
   const { revealStep, revealBtnDisabled, confetti: revealConfetti, setConfetti: setRevealConfetti, handleRevealNext } = useCakeReveal();
   const { 
     cakeCutRef, showPopup, setShowPopup, showGalleryBtn, setShowGalleryBtn, 
     showGallery, setShowGallery, cuttingAnimation, confetti: cutConfetti, setConfetti: setCutConfetti, cutCakeAnimation 
   } = useCakeCut();
-  const { canvasRef, isLoading, leftSliceRef, rightSliceRef, updateCakeTransform } = useCakeScene(revealStep);
+  const { canvasRef, isLoading, leftSliceRef, rightSliceRef, updateCakeTransform } = useCakeScene(revealStep, activeTheme);
 
   // Apply external rotation and zoom
   useEffect(() => {
@@ -45,7 +44,7 @@ export const CakeScene = ({ userName, rotation = 0, zoom = 1 }: CakeSceneProps) 
       
       {isLoading && <CakeLoadingOverlay />}
       
-      {!isLoading && !showPopup && !showGallery && (
+      {/* {!isLoading && !showPopup && !showGallery && (
         <CakeRevealButtons 
           revealStep={revealStep}
           revealBtnDisabled={revealBtnDisabled}
@@ -53,7 +52,7 @@ export const CakeScene = ({ userName, rotation = 0, zoom = 1 }: CakeSceneProps) 
           cutCakeAnimation={handleCutCake}
           cakeCutRef={cakeCutRef}
         />
-      )}
+      )} */}
       
       {showPopup && !showGallery && (
         <CakeBirthdayPopup

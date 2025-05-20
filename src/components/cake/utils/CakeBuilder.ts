@@ -1,4 +1,3 @@
-
 import * as THREE from "three";
 import { createFrostingMaterial, createGlazeMaterial, createBoardMaterial } from "./CakeMaterials";
 
@@ -12,9 +11,9 @@ export const getTargetGroup = (angle: number, leftSlice: THREE.Group, rightSlice
   }
 };
 
-export const createCakeBoard = (baseGroup: THREE.Group) => {
+export const createCakeBoard = (baseGroup: THREE.Group, theme: string = 'default') => {
   const boardGeo = new THREE.CylinderGeometry(3.2, 3.2, 0.22, 64);
-  const boardMat = createBoardMaterial();
+  const boardMat = createBoardMaterial(theme);
   const board = new THREE.Mesh(boardGeo, boardMat);
   board.position.y = -1.13;
   board.receiveShadow = true;
@@ -26,11 +25,10 @@ export const createCakeTier = (
   tier: { r: number, h: number, y: number }, 
   group: THREE.Group, 
   isLeft: boolean,
-  color: number = 0xb6e2a1,
-  glazeColor: number = 0xc6f58c
+  theme: string = 'default'
 ) => {
   const geo = new THREE.CylinderGeometry(tier.r, tier.r, tier.h, 64);
-  const mat = createFrostingMaterial(color);
+  const mat = createFrostingMaterial(theme);
   
   let mesh;
   if (isLeft) {
@@ -50,7 +48,7 @@ export const createCakeTier = (
   group.add(mesh);
   
   // Add glazing and drips
-  addGlazing(tier, group, isLeft, glazeColor);
+  addGlazing(tier, group, isLeft, theme);
   
   return mesh;
 };
@@ -59,11 +57,11 @@ const addGlazing = (
   tier: { r: number, h: number, y: number }, 
   group: THREE.Group, 
   isLeft: boolean,
-  glazeColor: number = 0xc6f58c
+  theme: string = 'default'
 ) => {
   // Glaze with glass-like material
   const dripGeo = new THREE.TorusGeometry(tier.r + 0.05, 0.08, 16, 32, Math.PI);
-  const dripMat = createGlazeMaterial(glazeColor);
+  const dripMat = createGlazeMaterial(theme);
   const drip = new THREE.Mesh(dripGeo, dripMat);
   drip.position.y = tier.y + tier.h / 2 - 0.05;
   drip.rotation.y = isLeft ? Math.PI : 0;
@@ -78,7 +76,7 @@ const addGlazing = (
     const angle = startAngle + ((endAngle - startAngle) * (d / 6)) + (Math.random() * 0.2);
     const dripLen = 0.18 + Math.random() * 0.18;
     const dripGeo = new THREE.SphereGeometry(0.07 + Math.random() * 0.04, 10, 10);
-    const dripMat = createGlazeMaterial(glazeColor);
+    const dripMat = createGlazeMaterial(theme);
     const dripDrop = new THREE.Mesh(dripGeo, dripMat);
     dripDrop.position.set(
       Math.cos(angle) * (tier.r + 0.07),
