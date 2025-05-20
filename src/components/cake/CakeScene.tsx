@@ -37,7 +37,8 @@ export const CakeScene = ({ userName, rotation = 0, zoom = 1 }: CakeSceneProps) 
   const rightSliceRef = useRef<THREE.Group | null>(null);
   const flameRefs = useRef<THREE.Mesh[]>([]);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-  const composerRef = useRef<THREE.WebGLRenderer | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const composerRef = useRef<any | null>(null); // Using 'any' type for the composer
   const particleSystemRef = useRef<THREE.Points | null>(null);
   const cakeCutRef = useRef(false);
 
@@ -150,10 +151,10 @@ export const CakeScene = ({ userName, rotation = 0, zoom = 1 }: CakeSceneProps) 
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     canvasRef.current.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
 
-    // Post-processing setup
-    const composer = setupPostProcessing(renderer, scene, camera);
-    composerRef.current = composer;
+    // Post-processing setup - store the composer in the ref but use renderer for rendering
+    composerRef.current = setupPostProcessing(renderer, scene, camera);
 
     // Lighting setup
     setupLighting(scene);
@@ -262,25 +263,25 @@ export const CakeScene = ({ userName, rotation = 0, zoom = 1 }: CakeSceneProps) 
         cakeGroup
       );
       
-      // Render with post-processing
-      if (composer) {
-        composer.render();
-      } else {
-        renderer.render(scene, camera);
+      // Render with post-processing if available, otherwise use standard renderer
+      if (composerRef.current) {
+        composerRef.current.render();
+      } else if (rendererRef.current) {
+        rendererRef.current.render(scene, camera);
       }
     };
     animate();
 
     // Handle resize
     const handleResize = () => {
-      if (!cameraRef.current) return;
+      if (!cameraRef.current || !rendererRef.current) return;
       
       cameraRef.current.aspect = window.innerWidth / window.innerHeight;
       cameraRef.current.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      rendererRef.current.setSize(window.innerWidth, window.innerHeight);
       
-      if (composer) {
-        composer.setSize(window.innerWidth, window.innerHeight);
+      if (composerRef.current) {
+        composerRef.current.setSize(window.innerWidth, window.innerHeight);
       }
     };
     window.addEventListener('resize', handleResize);

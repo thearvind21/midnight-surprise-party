@@ -43,7 +43,7 @@ const CakePage = () => {
       const timer = setTimeout(() => {
         setForceRender(prev => prev + 1);
         setIsInitialized(true);
-      }, 200);
+      }, 500); // Increased delay for better rendering
       
       return () => clearTimeout(timer);
     }
@@ -108,10 +108,11 @@ const CakePage = () => {
     }
   };
 
+  // Use CSS grid for better layout control
   return (
-    <div className={`min-h-screen w-full flex flex-col items-center justify-center relative ${getBackgroundStyle()} transition-colors duration-1000`}>
-      {/* Cake Scene Container - fixed size and position to ensure visibility */}
-      <div className="fixed inset-0 z-0" key={forceRender}>
+    <div className={`min-h-screen w-full flex flex-col relative ${getBackgroundStyle()} transition-colors duration-1000`}>
+      {/* Cake Scene Container - with higher z-index */}
+      <div className="absolute inset-0 z-10" key={forceRender}>
         <CakeScene 
           userName={userName} 
           rotation={cakeRotation}
@@ -120,19 +121,21 @@ const CakePage = () => {
       </div>
       
       {/* Controls and UI elements - positioned with higher z-index */}
-      <div className="relative z-10 w-full h-full">
-        <CakeControls 
-          isMusicPlaying={isMusicPlaying}
-          toggleMusic={toggleMusic}
-          handleCutCake={handleCutCake}
-          cakeCut={cakeCut}
-          cuttingAnimation={cuttingAnimation}
-          userName={userName}
-          onRotateCake={handleRotateCake}
-          onZoomCake={handleZoomCake}
-          onChangeTheme={changeTheme}
-          activeTheme={activeTheme}
-        />
+      <div className="relative z-20 w-full h-full pointer-events-none">
+        <div className="pointer-events-auto">
+          <CakeControls 
+            isMusicPlaying={isMusicPlaying}
+            toggleMusic={toggleMusic}
+            handleCutCake={handleCutCake}
+            cakeCut={cakeCut}
+            cuttingAnimation={cuttingAnimation}
+            userName={userName}
+            onRotateCake={handleRotateCake}
+            onZoomCake={handleZoomCake}
+            onChangeTheme={changeTheme}
+            activeTheme={activeTheme}
+          />
+        </div>
       </div>
     </div>
   );

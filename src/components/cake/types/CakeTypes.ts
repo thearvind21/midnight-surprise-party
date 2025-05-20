@@ -1,5 +1,6 @@
 
 import * as THREE from "three";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 
 // Common cake properties
 export interface CakeTier {
@@ -33,4 +34,9 @@ export interface CakeControlsProps {
 export interface AnimationCallbacks {
   onComplete: () => void;
   onHalfway?: () => void;
+}
+
+// Post processing types
+export interface PostProcessingEffects {
+  composer: EffectComposer;
 }
