@@ -3,6 +3,7 @@ import CountdownTimer from "@/components/CountdownTimer";
 import { Button } from "@/components/ui/button";
 import { BirthdayContext, TimeContext } from "@/contexts/BirthdayContext";
 import { gsap } from "gsap";
+import { useNavigate } from "react-router-dom";
 
 const BackgroundBubble = ({ delay = 0, x = 0, size = 100, color = "bg-pink-200" }: any) => {
   const bubbleRef = useRef<HTMLDivElement>(null);
@@ -47,6 +48,7 @@ const LandingPage = () => {
   const { currentTime } = useContext(TimeContext);
   const [activeTheme, setActiveTheme] = useState("default");
   const [bubbles, setBubbles] = useState<any[]>([]);
+  const navigate = useNavigate();
   
   // Create bubbles for background
   useEffect(() => {
@@ -87,7 +89,18 @@ const LandingPage = () => {
   };
   
   const handleEnterParty = () => {
-    setShowSurpriseModal(true);
+    // Check if it's birthday time before showing the modal
+    if (isBirthdayTime) {
+      // Instead of just showing the modal, navigate to the cake page
+      navigate('/cake');
+      // Optionally, still show the modal briefly on arrival, or handle it differently
+      // setShowSurpriseModal(true);
+    } else {
+      // Handle case where it's not birthday time yet (e.g., show notification prompt)
+      console.log("Not birthday time yet, maybe show a notification opt-in?");
+      // For now, just show the modal for demonstration if needed, or do nothing.
+      // setShowSurpriseModal(true);
+    }
   };
 
   const renderThemeButtons = () => {
