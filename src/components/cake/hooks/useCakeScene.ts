@@ -18,6 +18,24 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
   const composerRef = useRef<any | null>(null);
   const particleSystemRef = useRef<THREE.Points | null>(null);
   const cakeCutRef = useRef(false);
+  const animationStartTimesRef = useRef({
+    base: Date.now(),
+    tier1: Date.now() + 500,
+    tier2: Date.now() + 1000,
+    tier3: Date.now() + 1500,
+    deco: Date.now() + 2000
+  });
+
+  // Reset animation times when reveal step changes
+  useEffect(() => {
+    animationStartTimesRef.current = {
+      base: Date.now(),
+      tier1: Date.now() + 500,
+      tier2: Date.now() + 1000,
+      tier3: Date.now() + 1500,
+      deco: Date.now() + 2000
+    };
+  }, [revealStep]);
   
   // Set up THREE.js scene
   useEffect(() => {
@@ -73,7 +91,7 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
     cakeGroup.add(decoGroup);
 
     // Create and add cake components to their respective groups
-    createCakeBoard(baseGroup, activeTheme); // Add board to baseGroup
+    createCakeBoard(baseGroup, activeTheme);
 
     const tiers = [
       { r: 2, h: 0.9, y: -0.6 },
@@ -81,27 +99,18 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
       { r: 0.8, h: 0.7, y: 1.0 },
     ];
 
-    // createCakeTier now adds directly to the provided group
-    createCakeTier(tiers[0], tier1Group, activeTheme); 
+    createCakeTier(tiers[0], tier1Group, activeTheme);
     createCakeTier(tiers[1], tier2Group, activeTheme);
     createCakeTier(tiers[2], tier3Group, activeTheme);
 
-    // Decoration functions now add directly to the provided group
-    addSucculentsAroundCake(decoGroup, activeTheme); 
-    addPebbles(decoGroup, activeTheme); 
-    flameRefs.current = addCandles(decoGroup, activeTheme); 
-    createFlower(decoGroup, activeTheme); 
+    addSucculentsAroundCake(decoGroup, activeTheme);
+    addPebbles(decoGroup, activeTheme);
+    flameRefs.current = addCandles(decoGroup, activeTheme);
+    createFlower(decoGroup, activeTheme);
 
     scene.add(cakeGroup);
     cakeGroupRef.current = cakeGroup;
     setIsLoading(false);
-
-    // Temporarily set slice refs to dummy groups for reveal focus
-    leftSliceRef.current = new THREE.Group(); 
-    rightSliceRef.current = new THREE.Group(); 
-
-    // Create sparkle particle system (re-enable if needed after WebGL error is resolved)
-    // particleSystemRef.current = createSparkles(scene);
 
     // Set initial scales for reveal - start with larger initial scale
     baseGroup.scale.set(0.2, 0.2, 0.2);
@@ -109,26 +118,6 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
     tier2Group.scale.set(0.2, 0.2, 0.2);
     tier3Group.scale.set(0.2, 0.2, 0.2);
     decoGroup.scale.set(0.2, 0.2, 0.2);
-
-    // Animation timing variables
-    const animationStartTimes = useRef({
-      base: Date.now(),
-      tier1: Date.now() + 500,  // 500ms delay
-      tier2: Date.now() + 1000, // 1000ms delay
-      tier3: Date.now() + 1500, // 1500ms delay
-      deco: Date.now() + 2000   // 2000ms delay
-    });
-
-    // Reset animation times when reveal step changes
-    useEffect(() => {
-      animationStartTimes.current = {
-        base: Date.now(),
-        tier1: Date.now() + 500,
-        tier2: Date.now() + 1000,
-        tier3: Date.now() + 1500,
-        deco: Date.now() + 2000
-      };
-    }, [revealStep]);
 
     // Animation loop
     let startTime = Date.now();
@@ -150,7 +139,7 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
         tier3Group,
         decoGroup,
         cakeGroup,
-        animationStartTimes.current
+        animationStartTimesRef.current
       );
       
       // Render with post-processing if available, otherwise use standard renderer
@@ -187,7 +176,7 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
         // composerRef.current.passes.forEach((pass: any) => { if (pass.dispose) pass.dispose(); });
       }
     };
-  }, [revealStep, activeTheme]); // Re-run effect if revealStep or activeTheme changes
+  }, [revealStep, activeTheme]);
 
   // Function to update cake rotation and zoom
   const updateCakeTransform = (rotation: number = 0, zoom: number = 1) => {
@@ -196,7 +185,6 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
       cakeGroupRef.current.rotation.y = rotation;
 
       // Adjust camera position for zoom
-      // Assuming initial camera position is (0, 2, 8)
       const initialCameraPosition = new THREE.Vector3(0, 2, 8);
       const zoomedPosition = initialCameraPosition.clone().multiplyScalar(1 / zoom);
       cameraRef.current.position.copy(zoomedPosition);
