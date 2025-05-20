@@ -78,7 +78,7 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
           )}
 
           {/* Add Next Layer button - visible when not cutting and not yet fully revealed */}
-          {/* {!cakeCut && !cuttingAnimation && revealStep < 5 && (
+          {!cakeCut && !cuttingAnimation && revealStep < 5 && (
              <Button
               onClick={handleRevealNext}
               disabled={revealBtnDisabled}
@@ -88,7 +88,7 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
               {revealStep > 0 && revealStep < 4 && "Next Layer"}
               {revealStep === 4 && "Final Touch!"}
             </Button>
-          )} */}
+          )}
 
         </div>
       </div>
