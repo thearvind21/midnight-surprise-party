@@ -153,9 +153,14 @@ export const useCakeScene = (revealStep: number) => {
       );
       
       // Render with post-processing if available, otherwise use standard renderer
-      if (composerRef.current) {
-        composerRef.current.render();
-      } else if (rendererRef.current) {
+      // if (composerRef.current) {
+      //   composerRef.current.render();
+      // } else if (rendererRef.current) {
+      //   rendererRef.current.render(scene, camera);
+      // }
+      
+      // Temporarily force standard renderer to debug WebGL error
+      if (rendererRef.current) {
         rendererRef.current.render(scene, camera);
       }
     };
