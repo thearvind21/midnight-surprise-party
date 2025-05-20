@@ -1,4 +1,3 @@
-
 import { useContext, useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BirthdayContext } from "@/contexts/BirthdayContext";
@@ -22,10 +21,9 @@ const CakePage = () => {
       navigate("/");
     }
     
-    // Initialize audio with better birthday music
-    audioRef.current = new Audio("https://www.chosic.com/wp-content/uploads/2020/05/Happy-Birthday-To-You-Song.mp3");
-    audioRef.current.loop = true;
-    audioRef.current.volume = 0.5; // Lower volume for better experience
+    // Initialize audio
+    // audioRef.current = new Audio("https://www.chosic.com/wp-content/uploads/2020/05/Happy-Birthday-To-You-Song.mp3");
+    // audioRef.current.loop = true;
     
     return () => {
       if (audioRef.current) {
