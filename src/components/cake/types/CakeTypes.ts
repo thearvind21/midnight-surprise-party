@@ -40,3 +40,30 @@ export interface AnimationCallbacks {
 export interface PostProcessingEffects {
   composer: EffectComposer;
 }
+
+// Cake Reveal Button Props
+export interface CakeRevealButtonsProps {
+  revealStep: number;
+  revealBtnDisabled: boolean;
+  handleRevealNext: () => void;
+  cutCakeAnimation: () => void;
+  cakeCutRef: React.MutableRefObject<boolean>;
+}
+
+// Birthday Popup Props
+export interface CakeBirthdayPopupProps {
+  userName: string;
+  setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowGalleryBtn: React.Dispatch<React.SetStateAction<boolean>>;
+  setConfetti: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+// Gallery Button Props
+export interface CakeGalleryButtonProps {
+  setShowGallery: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+// Gallery View Props
+export interface CakeGalleryViewProps {
+  setShowGallery: React.Dispatch<React.SetStateAction<boolean>>;
+}
