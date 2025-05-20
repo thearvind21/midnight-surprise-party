@@ -15,7 +15,8 @@ const CakePage = () => {
   const [cakeRotation, setCakeRotation] = useState(0);
   const [cakeZoom, setCakeZoom] = useState(1);
   const [activeTheme, setActiveTheme] = useState("default");
-  const [forceRender, setForceRender] = useState(0); // Add state to force re-render
+  const [forceRender, setForceRender] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   // Redirect if not birthday time yet
   useEffect(() => {
@@ -35,10 +36,18 @@ const CakePage = () => {
     };
   }, [isBirthdayTime, navigate]);
 
-  // Force the cake scene to re-render once on component mount
+  // Ensure the cake scene renders correctly on first load
   useEffect(() => {
-    setForceRender(prev => prev + 1);
-  }, []);
+    if (!isInitialized) {
+      // Force re-render after a short delay to ensure everything is loaded
+      const timer = setTimeout(() => {
+        setForceRender(prev => prev + 1);
+        setIsInitialized(true);
+      }, 200);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isInitialized]);
 
   const handleCutCake = () => {
     // Start cutting animation first
@@ -87,7 +96,7 @@ const CakePage = () => {
   const getBackgroundStyle = () => {
     switch(activeTheme) {
       case 'pastel':
-        return 'bg-gradient-to-br from-birthday-pink via-birthday-peach to-birthday-blue';
+        return 'bg-gradient-to-br from-pink-200 via-blue-100 to-green-200';
       case 'vibrant':
         return 'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500';
       case 'night':
@@ -95,14 +104,14 @@ const CakePage = () => {
       case 'forest':
         return 'bg-gradient-to-br from-emerald-500 to-teal-800';
       default:
-        return 'bg-gradient-to-br from-birthday-pink via-birthday-purple to-birthday-blue';
+        return 'bg-gradient-to-br from-pink-300 via-purple-300 to-blue-300';
     }
   };
 
   return (
-    <div className={`min-h-screen flex flex-col items-center justify-center relative overflow-hidden ${getBackgroundStyle()} transition-colors duration-1000`}>
-      {/* Force re-render with key prop */}
-      <div className="w-full h-full absolute inset-0" key={forceRender}>
+    <div className={`min-h-screen w-full flex flex-col items-center justify-center relative ${getBackgroundStyle()} transition-colors duration-1000`}>
+      {/* Cake Scene Container - fixed size and position to ensure visibility */}
+      <div className="fixed inset-0 z-0" key={forceRender}>
         <CakeScene 
           userName={userName} 
           rotation={cakeRotation}
@@ -110,8 +119,8 @@ const CakePage = () => {
         />
       </div>
       
-      {/* Controls and UI elements */}
-      <div className="relative z-10">
+      {/* Controls and UI elements - positioned with higher z-index */}
+      <div className="relative z-10 w-full h-full">
         <CakeControls 
           isMusicPlaying={isMusicPlaying}
           toggleMusic={toggleMusic}
