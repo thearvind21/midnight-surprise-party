@@ -84,19 +84,21 @@ const CakePage = () => {
         zoom={cakeZoom}
       />
       
-      {/* Controls with higher z-index */}
-      <CakeControls 
-        isMusicPlaying={isMusicPlaying}
-        toggleMusic={toggleMusic}
-        handleCutCake={handleCutCake}
-        cakeCut={cakeCut}
-        cuttingAnimation={cuttingAnimation}
-        userName={userName}
-        onRotateCake={handleRotateCake}
-        onZoomCake={handleZoomCake}
-        onChangeTheme={changeTheme}
-        activeTheme={activeTheme}
-      />
+      {/* Interactive controls panel with glass effect */}
+      <div className="fixed top-4 left-4 z-[100] flex flex-col gap-3">
+        <CakeControls 
+          isMusicPlaying={isMusicPlaying}
+          toggleMusic={toggleMusic}
+          handleCutCake={handleCutCake}
+          cakeCut={cakeCut}
+          cuttingAnimation={cuttingAnimation}
+          userName={userName}
+          onRotateCake={handleRotateCake}
+          onZoomCake={handleZoomCake}
+          onChangeTheme={changeTheme}
+          activeTheme={activeTheme}
+        />
+      </div>
     </div>
   );
 };
