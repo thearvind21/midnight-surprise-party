@@ -1,0 +1,36 @@
+
+import * as THREE from "three";
+
+// Common cake properties
+export interface CakeTier {
+  r: number;
+  h: number;
+  y: number;
+}
+
+// Props for the cake scene
+export interface CakeSceneProps {
+  userName: string;
+  rotation?: number;
+  zoom?: number;
+}
+
+// Props for cake controls
+export interface CakeControlsProps {
+  isMusicPlaying: boolean;
+  toggleMusic: () => void;
+  handleCutCake: () => void;
+  cakeCut: boolean;
+  cuttingAnimation: boolean;
+  userName: string;
+  onRotateCake: (direction: 'left' | 'right') => void;
+  onZoomCake: (direction: 'in' | 'out') => void;
+  onChangeTheme: (theme: string) => void;
+  activeTheme: string;
+}
+
+// Animation callbacks
+export interface AnimationCallbacks {
+  onComplete: () => void;
+  onHalfway?: () => void;
+}
