@@ -1,37 +1,39 @@
+import { useEffect, useState } from "react";
 
-import React from "react";
+const CakeRevealPopup = ({ allLayersRevealed }) => {
+  const [showPopup, setShowPopup] = useState(false);
 
-interface CakeBirthdayPopupProps {
-  userName: string;
-  setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowGalleryBtn: React.Dispatch<React.SetStateAction<boolean>>;
-  setConfetti: React.Dispatch<React.SetStateAction<boolean>>;
-}
+  useEffect(() => {
+    if (allLayersRevealed) {
+      setShowPopup(true);
+    }
+  }, [allLayersRevealed]);
 
-const CakeBirthdayPopup = ({ 
-  userName, 
-  setShowPopup,
-  setShowGalleryBtn,
-  setConfetti 
-}: CakeBirthdayPopupProps) => {
+  if (!showPopup) return null;
+
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-50">
-      <div className="bg-white rounded-xl shadow-xl p-8 max-w-md w-full bg-gradient-to-br from-white to-purple-50">
-        <div className="relative text-center">
-          <h2 className="text-2xl font-bold mb-4 animate-fade-in">🎉 Happy Birthday, {userName}! 🎉</h2>
-          <div className="typewriter mb-6">
-            <p className="text-lg">Wishing you a sweet year ahead filled with joy, success, and beautiful memories!</p>
-          </div>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white p-8 rounded-2xl shadow-2xl text-center max-w-sm">
+        <h2 className="text-2xl font-bold text-pink-600">🎉 Surprise! 🎉</h2>
+        <p className="mt-4 text-gray-700">
+          All Layers Revealed! Here's your wish:
+        </p>
+        <p className="mt-2 italic text-lg text-purple-700">
+          “Wishing you a day full of sweet surprises and joy!” 🎂
+        </p>
+
+        <div className="mt-6 flex justify-center space-x-4">
           <button
-            className="px-6 py-2 bg-gradient-to-br from-purple-600 to-pink-500 text-white rounded-full font-semibold hover:bg-purple-700 transition hover:scale-105 transform shadow-lg"
-            onClick={() => {
-              setShowPopup(false);
-              setShowGalleryBtn(true);
-              setConfetti(true);
-              setTimeout(() => setConfetti(false), 3500);
-            }}
+            onClick={() => alert("Open gallery view here!")}
+            className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
           >
-            Thank you!
+            🎁 View Gallery
+          </button>
+          <button
+            onClick={() => setShowPopup(false)}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+          >
+            Close
           </button>
         </div>
       </div>
@@ -39,4 +41,4 @@ const CakeBirthdayPopup = ({
   );
 };
 
-export default CakeBirthdayPopup;
+export default CakeRevealPopup;

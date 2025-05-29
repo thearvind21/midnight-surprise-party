@@ -46,7 +46,7 @@ export const CakeControls: React.FC<CakeControlsProps> = ({
   
   return (
     <>
-
+      {/* Main controls - Removed */}
       
       {/* Interactive controls panel with glass effect */}
       <div className="fixed top-4 left-4 z-20 flex flex-col gap-3">

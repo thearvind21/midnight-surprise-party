@@ -10,6 +10,11 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
   const [isLoading, setIsLoading] = useState(true);
   
   const cakeGroupRef = useRef<THREE.Group | null>(null);
+  const baseGroupRef = useRef<THREE.Group | null>(null);
+  const tier1GroupRef = useRef<THREE.Group | null>(null);
+  const tier2GroupRef = useRef<THREE.Group | null>(null);
+  const tier3GroupRef = useRef<THREE.Group | null>(null);
+  const decoGroupRef = useRef<THREE.Group | null>(null);
   const leftSliceRef = useRef<THREE.Group | null>(null);
   const rightSliceRef = useRef<THREE.Group | null>(null);
   const flameRefs = useRef<THREE.Mesh[]>([]);
@@ -37,30 +42,25 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
     };
   }, [revealStep]);
   
-  // Set up THREE.js scene
+  // Control layer visibility based on revealStep
   useEffect(() => {
-    if (!canvasRef.current) return;
-    const canvasContainer = canvasRef.current;
+    if (!baseGroupRef.current || !tier1GroupRef.current || !tier2GroupRef.current || !tier3GroupRef.current || !decoGroupRef.current) return;
+
+    baseGroupRef.current.visible = revealStep >= 1;
+    tier1GroupRef.current.visible = revealStep >= 2;
+    tier2GroupRef.current.visible = revealStep >= 3;
+    tier3GroupRef.current.visible = revealStep >= 4;
+    decoGroupRef.current.visible = revealStep >= 5;
+  }, [revealStep]);
+  
+  // Function to set up the Three.js scene
+  const setupScene = (canvasContainer: HTMLDivElement, scene: THREE.Scene, camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer, width: number, height: number) => {
+
+    // Clear previous content
     canvasContainer.innerHTML = '';
 
-    // Set up scene
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      60,
-      canvasContainer.clientWidth / canvasContainer.clientHeight,
-      0.1,
-      1000
-    );
-    camera.position.set(0, 2, 8);
-    camera.lookAt(0, 0, 0);
-    cameraRef.current = camera;
-
-    const renderer = new THREE.WebGLRenderer({ 
-      antialias: true, 
-      alpha: true,
-      powerPreference: 'high-performance'
-    });
-    renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+    // Set up renderer size and add to container
+    renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
@@ -69,7 +69,7 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
     rendererRef.current = renderer;
 
     // Post-processing setup
-    composerRef.current = setupPostProcessing(renderer, scene, camera);
+    composerRef.current = setupPostProcessing(renderer, scene, camera, width, height);
 
     // Lighting setup
     setupLighting(scene);
@@ -90,6 +90,13 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
     cakeGroup.add(tier2Group);
     cakeGroup.add(tier3Group);
     cakeGroup.add(decoGroup);
+
+    // Assign groups to refs
+    baseGroupRef.current = baseGroup;
+    tier1GroupRef.current = tier1Group;
+    tier2GroupRef.current = tier2Group;
+    tier3GroupRef.current = tier3Group;
+    decoGroupRef.current = decoGroup;
 
     // Create and add cake components to their respective groups
     createCakeBoard(baseGroup, activeTheme);
@@ -113,14 +120,20 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
     cakeGroupRef.current = cakeGroup;
     setIsLoading(false);
 
-    // Set initial scales for reveal - start with larger initial scale
-    baseGroup.scale.set(0.2, 0.2, 0.2);
-    tier1Group.scale.set(0.2, 0.2, 0.2);
-    tier2Group.scale.set(0.2, 0.2, 0.2);
-    tier3Group.scale.set(0.2, 0.2, 0.2);
-    decoGroup.scale.set(0.2, 0.2, 0.2);
+    // Set initial scales to 1 and visibility to false to prepare for step-by-step reveal without scaling animation
+    baseGroup.scale.set(1, 1, 1);
+    tier1Group.scale.set(1, 1, 1);
+    tier2Group.scale.set(1, 1, 1);
+    tier3Group.scale.set(1, 1, 1);
+    decoGroup.scale.set(1, 1, 1);
 
-    // Animation loop
+    baseGroup.visible = false;
+    tier1Group.visible = false;
+    tier2Group.visible = false;
+    tier3Group.visible = false;
+    decoGroup.visible = false;
+
+    // Animation loop setup
     let startTime = Date.now();
     const animate = () => {
       requestAnimationFrame(animate);
@@ -131,18 +144,6 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
       // Animate candle flames (flicker)
       animateFlames(flameRefs.current, t);
       
-      // Animate reveal (scale up each group)
-      animateRevealScaling(
-        revealStep,
-        baseGroup,
-        tier1Group,
-        tier2Group,
-        tier3Group,
-        decoGroup,
-        cakeGroup,
-        animationStartTimesRef.current
-      );
-      
       // Render with post-processing if available, otherwise use standard renderer
       if (composerRef.current) {
         composerRef.current.render();
@@ -151,6 +152,12 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
       }
     };
     animate();
+  }
+
+  // Set up THREE.js scene
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    const canvasContainer = canvasRef.current;
 
     // Handle resize using ResizeObserver
     const resizeObserver = new ResizeObserver(entries => {
@@ -169,15 +176,92 @@ export const useCakeScene = (revealStep: number, activeTheme: string) => {
 
     resizeObserver.observe(canvasContainer);
     
-    return () => {
-      renderer.dispose();
-      if (composerRef.current) {
-        // Dispose of passes if composer has a dispose method
-        // composerRef.current.passes.forEach((pass: any) => { if (pass.dispose) pass.dispose(); });
+    // Initial scene setup if container already has size
+    if (canvasContainer.clientWidth > 0 && canvasContainer.clientHeight > 0) {
+        // Set up scene
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
+          60,
+          canvasContainer.clientWidth / canvasContainer.clientHeight,
+          0.1,
+          1000
+        );
+        camera.position.set(0, 2, 8);
+        camera.lookAt(0, 0, 0);
+        cameraRef.current = camera;
+
+        const renderer = new THREE.WebGLRenderer({ 
+          antialias: true, 
+          alpha: true,
+          powerPreference: 'high-performance'
+        });
+        
+        setupScene(canvasContainer, scene, camera, renderer, canvasContainer.clientWidth, canvasContainer.clientHeight);
+    }
+
+    // Observe resize changes to update renderer size and potentially setup initially
+    const observer = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        const { clientWidth, clientHeight } = entry.target;
+        if (clientWidth > 0 && clientHeight > 0) {
+          // If the scene hasn't been set up yet, or on resize
+          if (!rendererRef.current || rendererRef.current.getSize(new THREE.Vector2()).width === 0) {
+             // Set up scene
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(
+              60,
+              clientWidth / clientHeight,
+              0.1,
+              1000
+            );
+            camera.position.set(0, 2, 8);
+            camera.lookAt(0, 0, 0);
+            cameraRef.current = camera;
+
+            const renderer = new THREE.WebGLRenderer({ 
+              antialias: true, 
+              alpha: true,
+              powerPreference: 'high-performance'
+            });
+            setupScene(entry.target as HTMLDivElement, scene, camera, renderer, clientWidth, clientHeight);
+          } else if (cameraRef.current && rendererRef.current) {
+             // Just resize if already set up
+             cameraRef.current.aspect = clientWidth / clientHeight;
+             cameraRef.current.updateProjectionMatrix();
+             rendererRef.current.setSize(clientWidth, clientHeight);
+             if (composerRef.current) {
+               composerRef.current.setSize(clientWidth, clientHeight);
+             }
+          }
+        } else {
+           // If size becomes zero, clean up Three.js to avoid errors
+           if (rendererRef.current) {
+             rendererRef.current.dispose();
+             rendererRef.current = null;
+             if (canvasContainer) canvasContainer.innerHTML = ''; // Clear the canvas element
+           }
+           if (composerRef.current) composerRef.current = null;
+           if (cameraRef.current) cameraRef.current = null;
+           // Optionally reset other refs and states if needed
+           cakeGroupRef.current = null;
+           baseGroupRef.current = null;
+           tier1GroupRef.current = null;
+           tier2GroupRef.current = null;
+           tier3GroupRef.current = null;
+           decoGroupRef.current = null;
+           flameRefs.current = [];
+           setIsLoading(true);
+        }
       }
-      resizeObserver.disconnect();
+    });
+
+    observer.observe(canvasContainer);
+
+    return () => {
+      if (rendererRef.current) rendererRef.current.dispose();
+      observer.disconnect();
     };
-  }, [revealStep, activeTheme]);
+  }, [activeTheme]); // Removed revealStep from dependency array of this effect
 
   // Function to update cake rotation and zoom
   const updateCakeTransform = (rotation: number = 0, zoom: number = 1) => {

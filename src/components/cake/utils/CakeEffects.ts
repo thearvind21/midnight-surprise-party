@@ -7,7 +7,9 @@ import { SSAOPass } from "three/examples/jsm/postprocessing/SSAOPass.js";
 export const setupPostProcessing = (
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
-  camera: THREE.PerspectiveCamera
+  camera: THREE.PerspectiveCamera,
+  width: number,
+  height: number
 ): EffectComposer => {
   const composer = new EffectComposer(renderer);
   const renderPass = new RenderPass(scene, camera);
@@ -15,7 +17,7 @@ export const setupPostProcessing = (
   
   // Bloom effect
   const bloomPass = new UnrealBloomPass(
-    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    new THREE.Vector2(width, height),
     0.8, // bloom strength
     0.3, // bloom radius
     0.7  // bloom threshold
@@ -23,7 +25,7 @@ export const setupPostProcessing = (
   composer.addPass(bloomPass);
   
   // Ambient Occlusion
-  const ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
+  const ssaoPass = new SSAOPass(scene, camera, width, height);
   ssaoPass.kernelRadius = 16;
   ssaoPass.minDistance = 0.005;
   ssaoPass.maxDistance = 0.1;

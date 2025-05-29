@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAudio } from "./useAudio";
 
@@ -12,7 +11,7 @@ export const useCakeReveal = () => {
   const handleRevealNext = () => {
     if (revealStep >= 5) return;
     
-    playSound('pop', revealStep);
+    // playSound('pop', revealStep);
     setRevealStep(revealStep + 1);
     
     // Dramatic pause before final deco

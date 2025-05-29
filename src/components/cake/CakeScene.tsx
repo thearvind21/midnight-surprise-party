@@ -32,12 +32,12 @@ export const CakeScene = ({ userName, rotation = 0, zoom = 1, activeTheme }: Cak
   };
 
   return (
-    <>
+    <div className="absolute inset-0 z-10">
       <Confetti trigger={revealConfetti || cutConfetti} />
       <Sparkles trigger={revealStep === 5} />
       
-      {/* Canvas container with higher z-index */}
-      <div ref={canvasRef} className="absolute inset-0 z-10"></div>
+      {/* Canvas container */}
+      <div ref={canvasRef} className="w-full h-full"></div>
       
       {/* Simple background */}
       <div className="fixed inset-0 bg-gradient-to-br from-birthday-pink via-birthday-purple to-birthday-blue -z-10"></div>
@@ -61,13 +61,13 @@ export const CakeScene = ({ userName, rotation = 0, zoom = 1, activeTheme }: Cak
         />
       )}
       
-      {showGalleryBtn && !showGallery && (
+      {showGalleryBtn && !showGallery && ( // Only show gallery button if not in gallery view
         <CakeGalleryButton setShowGallery={setShowGallery} />
       )}
       
       {showGallery && (
         <CakeGalleryView setShowGallery={setShowGallery} />
       )}
-    </>
+    </div>
   );
 };

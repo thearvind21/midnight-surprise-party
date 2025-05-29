@@ -34,10 +34,7 @@ const CakePage = () => {
       navigate("/");
     }
     
-    // Initialize audio
-    // audioRef.current = new Audio("https://www.chosic.com/wp-content/uploads/2020/05/Happy-Birthday-To-You-Song.mp3");
-    // audioRef.current.loop = true;
-    
+
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
