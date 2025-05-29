@@ -18,6 +18,7 @@ import {
   Share,
   Download
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 // Mock context and hooks for demonstration
 const useBirthdayContext = () => ({
@@ -420,7 +421,6 @@ const CakeControls = ({
 
 // Main Cake Page Component
 const CakePage = () => {
-  const { isBirthdayTime, cakeCut, setCakeCut } = useBirthdayContext();
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const audioRef = useRef(null);
   const [userName] = useState("Sarah");
@@ -428,6 +428,9 @@ const CakePage = () => {
   const [cakeRotation, setCakeRotation] = useState(0);
   const [cakeZoom, setCakeZoom] = useState(1);
   const [activeTheme, setActiveTheme] = useState("default");
+  const [showRevealPopup, setShowRevealPopup] = useState(false);
+  const [cakeCut, setCakeCut] = useState(false);
+  const navigate = useNavigate();
 
   const { revealStep, revealBtnDisabled, handleRevealNext } = useCakeReveal();
   const { 
@@ -438,13 +441,19 @@ const CakePage = () => {
 
   const handleCutCake = () => {
     setCuttingAnimation(true);
-    
     setTimeout(() => {
-      setCakeCut();
+      setCakeCut(true);
+      if (setCutConfetti) setCutConfetti();
+      if (setShowPopup) setShowPopup();
       setTimeout(() => {
-        console.log("Navigate to gallery");
+        if (setShowGallery) setShowGallery();
       }, 5000);
     }, 3500);
+  };
+
+  const handleRevealNextWithPopup = () => {
+    handleRevealNext && handleRevealNext();
+    setShowRevealPopup(true);
   };
 
   const toggleMusic = () => {
@@ -533,8 +542,17 @@ const CakePage = () => {
           activeTheme={activeTheme}
           revealStep={revealStep}
           revealBtnDisabled={revealBtnDisabled}
-          handleRevealNext={handleRevealNext}
+          handleRevealNext={handleRevealNextWithPopup}
         />
+        {/* Show Gallery Button after cake is cut */}
+        {cakeCut && (
+          <button
+            className="mt-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold shadow hover:scale-105 transition"
+            onClick={() => navigate("/gallery")}
+          >
+            🖼️ Go to Gallery
+          </button>
+        )}
       </div>
 
       {/* Celebration Status Bar */}
@@ -561,6 +579,66 @@ const CakePage = () => {
         <source src="/birthday-song.mp3" type="audio/mpeg" />
       </audio>
 
+      {/* Confetti overlay (if triggered) */}
+      {cutConfetti && (
+        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
+          <span className="text-7xl animate-bounce">🎉</span>
+        </div>
+      )}
+      {/* Cut Cake Popup */}
+      {showPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 flex flex-col items-center gap-4 max-w-xs">
+            <span className="text-5xl">🎂</span>
+            <h2 className="text-2xl font-bold text-pink-600">Cake Cut!</h2>
+            <p className="text-center text-gray-700">Congratulations! The cake is cut. Check out the gallery for sweet memories.</p>
+            <button
+              className="mt-2 px-4 py-2 bg-gradient-to-r from-pink-400 to-yellow-400 text-white rounded-lg font-semibold shadow hover:scale-105 transition"
+              onClick={() => { if (setShowPopup) setShowPopup(); navigate("/gallery"); }}
+            >
+              View Gallery
+            </button>
+            <button
+              className="text-xs text-gray-400 mt-2 hover:underline"
+              onClick={() => { if (setShowPopup) setShowPopup(); }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Gallery Popup */}
+      {showGallery && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 flex flex-col items-center gap-4 max-w-xs">
+            <span className="text-4xl">🖼️</span>
+            <h2 className="text-xl font-bold text-purple-600">Gallery</h2>
+            <p className="text-center text-gray-700">Here are your celebration memories! (Gallery content goes here.)</p>
+            <button
+              className="mt-2 px-4 py-2 bg-gradient-to-r from-purple-400 to-pink-400 text-white rounded-lg font-semibold shadow hover:scale-105 transition"
+              onClick={() => { if (setShowGallery) setShowGallery(); }}
+            >
+              Close Gallery
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Reveal Popup */}
+      {showRevealPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 flex flex-col items-center gap-4 max-w-xs">
+            <span className="text-5xl">✨</span>
+            <h2 className="text-2xl font-bold text-purple-600">Surprise Revealed!</h2>
+            <p className="text-center text-gray-700">A special surprise has been revealed. Enjoy the moment!</p>
+            <button
+              className="mt-2 px-4 py-2 bg-gradient-to-r from-purple-400 to-pink-400 text-white rounded-lg font-semibold shadow hover:scale-105 transition"
+              onClick={() => setShowRevealPopup(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
