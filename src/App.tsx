@@ -18,7 +18,7 @@ const AppContent = () => {
   const [isBirthdayTime, setIsBirthdayTime] = useState(false);
   const [showSurpriseModal, setShowSurpriseModal] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [name, setName] = useState('Sarah'); // Set the birthday person's name here
+  const [name, setName] = useState('Abi'); // Set the birthday person's name here
   const [cakeCut, setCakeCut] = useState(false);
   const navigate = useNavigate();
 
