@@ -35,7 +35,7 @@ const PhotoGallery = () => {
   const [photos] = useState([
     {
       id: 1,
-      src: "images/1.jpg",
+      src: "images/1.png",
       alt: "Birthday Memories",
       caption: "My Birthday Time We met ",
       date: "Oct 21, 2020",
@@ -65,7 +65,7 @@ const PhotoGallery = () => {
     },
     {
       id: 4,
-      src: "images/4.jpg",
+      src: "images/4.png",
       alt: "Friends Together",
       caption: "We cant Take A pic with our favorite pet ",
       date: "Feb 27, 2025",
@@ -75,7 +75,7 @@ const PhotoGallery = () => {
     },
     {
       id: 5,
-      src: "images/5.jpg",
+      src: "images/5.png",
       alt: "Friends Together",
       caption: "When i come to your home for Lunch ",
       date: "April 6, 2025",
